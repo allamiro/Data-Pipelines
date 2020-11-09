@@ -1,0 +1,35 @@
+# Apache Kafka & Zookeeper  Cluster Generator Bash Script
+
+This is a bash script to create Apache  zookeeper and Apache  Kafka cluster on multiple Linux  servers ..
+
+## What the script does 
+
+### STEP 1 SCRIPT INPUTS 
+
+ - Accquire the cluster data 
+ - Provide the number of servers to form the cluster 
+ - Provide server,s names and IP addresses
+ - Provide sudo or root account name
+  
+  
+### STEP 2 SCRIPT PROCESS
+ 
+ - Download Apache Zookeeper software
+ - Download Apache Kafka Software
+ - Extract the software  and create the installation folder
+ - Create  Apache Zookeeper data and logs folder
+ - Create  Apache Kafka  logs
+ - Create Aapachce Kafka and Zookeeper services 
+ - Start the Zookeeper 
+ - Start the Kafka
+  
+  
+### STEP 3  SCRIPT OUTPUT / VERIFICATION
+  
+ -  Verify  Apache Zookeeper cluster  is working
+ -  Verify  Apache Kafka cluster  is working 
+  
+  
+##  How to Run the Script 
+
+  ```
