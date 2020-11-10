@@ -243,6 +243,16 @@ To Create KAFKA topic
 /etc/kafka/bin/kafka-topics --create --zookeeper localhost:2181 --replication-factor 2 --partitions 3 --topic NETWORK
 ```
 
+To check the replication of your topics 
 
+```
+/etc/kafka/bin/kafka-topics.sh --describe --topic WINDOWS  --zookeeper  localhost:2181
+OpenJDK 64-Bit Server VM warning: If the number of processors is expected to increase from one, then you should configure the number of parallel GC threads appropriately using -XX:ParallelGCThreads=N
+Topic: WINDOWS  PartitionCount: 3       ReplicationFactor: 2    Configs:
+        Topic: WINDOWS  Partition: 0    Leader: 3       Replicas: 3,1   Isr: 3,1
+        Topic: WINDOWS  Partition: 1    Leader: 1       Replicas: 1,2   Isr: 1,2
+        Topic: WINDOWS  Partition: 2    Leader: 2       Replicas: 2,3   Isr: 2,3
+
+```
 Start Sending Data to KAFKA 
 
