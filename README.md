@@ -197,5 +197,11 @@ EOF
 Start KAFKA Service
 
 
+```
+systemctl daemon-reload
+systemctl start kafka
+systemctl status -l kafka
+systemctl enable  kafka
 
+``
 
