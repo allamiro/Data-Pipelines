@@ -1,4 +1,5 @@
 # Kafka Monitoring with Grafana 
+![alt text](https://github.com/allamiro/KAFKA/blob/master/kafka-monitor/image.png)
 An open source project to develop a monitoring system for kafka based on grafana telegram and influxdb
 
 
