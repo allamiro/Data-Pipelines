@@ -62,7 +62,7 @@ and use the default  username admin/admin the system will prompt you to change t
 
 
 ## Install InfluxDB
-
+Create InfluxDB repo file 
 ```
 cat <<EOF | sudo tee /etc/yum.repos.d/influxdb.repo
 [influxdb]
@@ -85,13 +85,29 @@ systemctl status influxdb
 systemctl enable influxdb
 ```
 
-## Configure InfluxDB  database username and permissions
 
+
+## Configure InfluxDB 
+create influxDB database username and permissions
+
+
+```
+
+
+```
 
 
 
 ## Connect Grafana to InfluxDB 
+Please note:
+Installation of the InfluxDB package may require root or administrator privileges in order to complete successfully.
+InfluxDB OSS networking ports
+By default, InfluxDB uses the following network ports:
 
+```
+TCP port 8086 is available for client-server communication using the InfluxDB API.
+TCP port 8088 is available for the RPC service to perform back up and restore operations.
+```
 Add influxDB data source to grafana
 
 ![alt text](https://github.com/allamiro/KAFKA/blob/master/kafka-monitor/add-influxdb-datasource.PNG)
