@@ -176,8 +176,25 @@ EOF
 ```
 
 
+Create a KAFKA Service file on every server
 
 
+```
+cat <<EOF | sudo tee /etc/systemd/system/kafka.service
+[Unit]
+Description=Zookeeper Service
+WantedBy=multi-user.target
+
+[Service]
+Type=simple
+ExecStart=/etc/kafka/bin/kafka-server-start.sh /etc/kafka/config/server.properties
+Restart=always
+EOF
+```
+
+
+
+Start KAFKA Service
 
 
 
