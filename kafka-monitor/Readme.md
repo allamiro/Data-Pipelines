@@ -142,8 +142,9 @@ choose InfluxDB as a datasource.
 
 ![alt text](https://github.com/allamiro/KAFKA/blob/master/kafka-monitor/add-db2.PNG)
 
+Click on Save and Test  and if every thing is working you will see the message Data source is working
 
-
+![alt text](https://github.com/allamiro/KAFKA/blob/master/kafka-monitor/working-datasourceinfluxdb.PNG)
 
 
 ## Install Telegraf on the KAFKA Server or Kafka Cluster 
