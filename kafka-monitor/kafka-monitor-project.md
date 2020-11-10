@@ -2,7 +2,7 @@
 An open source project to develop a monitoring system for kafka based on grafana telegram and influxdb
 
 
-# Install Grafana and Influx DB 
+# Setup Grafana and Influx DB  Monitoring Server
 
 
 
@@ -22,10 +22,21 @@ EOF
 ```
 
 
-# 
+#  Install Grafana 
 ```
-sudo yum install grafana -y
+yum install grafana -y
 ```
+
+```
+yum install initscripts urw-fonts wget -y
+```
+
+
+
+
+
+
+
 
 
 
