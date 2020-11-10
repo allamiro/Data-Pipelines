@@ -56,7 +56,7 @@ systemctl enable grafana-server
 Open your browser and navigate to your grafana  system using the ip or the hotname setup earlier 
 and use the default  username admin/admin the system will prompt you to change the password.
 
-![alt text](https://github.com/allamiro/KAFKA/blob/master/kafka-monitor/grafana-7login.png)
+![alt text](https://github.com/allamiro/KAFKA/blob/master/kafka-monitor/grafana-7login.PNG)
 
 
 
