@@ -173,7 +173,17 @@ yum install telegraf -y
 
 ```
 
-3. Start the influxDB server
+3. Configure Telegraf 
+
+Configure Telegraf to send some metrics to test connection to the influxdb and grafana server
+
+
+
+
+
+
+
+4. Start the influxDB server
 
 ```
 
@@ -188,6 +198,23 @@ systemctl enable telegraf
 
 
 
+
+
+
+## Configure Telegraf to read Kafka Metrics
+
+Update telegraf with KAFKA metrics
+
+
+
+
+## Create Grafana KAFKA monitoring Dashabords 
+
+
+
+
+
+
 ## Disclaimer
 This repository also contains a few assets that are not my own works and are stored here for data archival purposes only.So please  do not use any of the resources listed above in a way that would violate the copyright of their creators.
 
@@ -195,6 +222,7 @@ This repository also contains a few assets that are not my own works and are sto
 
 
 
+## Maintainer 
 
 
 
