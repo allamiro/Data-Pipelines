@@ -182,7 +182,7 @@ Create a KAFKA Service file on every server
 ```
 cat <<EOF | sudo tee /etc/systemd/system/kafka.service
 [Unit]
-Description=Zookeeper Service
+Description=Kafka Service
 WantedBy=multi-user.target
 
 [Service]
