@@ -110,15 +110,27 @@ cat <<EOF | sudo tee
 EOF
 ```
 
-Create Zookeeper Service file 
+Create a Zookeeper Service file on every server
 
 ```
+cat <<EOF | sudo tee /etc/systemd/system/zoo.service
+[Unit]
+Description=Zookeeper Service
+WantedBy=multi-user.target
+
+[Service]
+Type=simple
+ExecStart=/etc/kafka/bin/zookeeper-server-start.sh /etc/kafka/config/zookeeper.properties
+Restart=always
+EOF
 ```
 
 
 Start Zookeeper Service
 
 ```
+systemctl daemon-reload
+
 ```
 
 
