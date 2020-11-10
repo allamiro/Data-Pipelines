@@ -23,8 +23,9 @@ EOF
 
 
 # 
-
-
+```
+sudo yum install grafana -y
+```
 
 
 
