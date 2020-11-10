@@ -177,7 +177,9 @@ yum install telegraf -y
 
 Configure Telegraf to send some metrics to test connection to the influxdb and grafana server
 
-
+```
+vim /etc/telegraf/telegraf.conf
+```
 
 
 
