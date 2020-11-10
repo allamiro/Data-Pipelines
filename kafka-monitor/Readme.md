@@ -77,12 +77,24 @@ EOF
 ```
 yum install influxdb -y
 ```
+Start the influxDB server
+
+```
+sudo systemctl start influxdb
+systemctl status influxdb
+systemctl enable influxdb
+```
+
+## Configure InfluxDB  database username and permissions
+
+
+
 
 ## Connect Grafana to InfluxDB 
 
+Add influxDB data source to grafana
 
-
-
+![alt text](https://github.com/allamiro/KAFKA/blob/master/kafka-monitor/add-influxdb-datasource.PNG)
 
 ## Install Telegraf on the KAFKA Server or Kafka Cluster 
 
