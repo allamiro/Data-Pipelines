@@ -57,13 +57,37 @@ tar -xzvf kafka_2.13-2.6.0.tgz
 mv kafka_2.13-2.6.0 /etc/kafka
 
 mkdir -p /var/lib/zookeeper/
+```
 
+Update Zookeeper properties file on every server
 
+```
+cat <<EOF | sudo tee /etc/kafka/config/zookeeper.properties
+tickTime=2000
+dataDir=/var/lib/zookeeper
+clientPort=2181
+initLimit=5
+syncLimit=2
+server.1=kfk1:2888:3888
+server.2=kfk2:2888:3888
+server.3=kfk3:2888:3888
+EOF
+
+Add Firewall rules
+
+```
+```
+
+Create Zookeeper Service file 
+
+```
 ```
 
 
+Start Zookeeper Service
 
-
+```
+```
 
 
 
