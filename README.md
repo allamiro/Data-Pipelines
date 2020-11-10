@@ -72,6 +72,8 @@ server.1=kfk1:2888:3888
 server.2=kfk2:2888:3888
 server.3=kfk3:2888:3888
 EOF
+```
+
 
 Add Firewall rules
 
