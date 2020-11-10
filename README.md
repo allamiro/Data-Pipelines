@@ -75,33 +75,33 @@ EOF
 ```
 
 
-Add Firewall rules
+Add the following Firewall rules on every server 
 
 ```
 firewall-cmd --permanent --add-port=2181/tcp
 firewall-cmd --reload
 ```
-Create the id file on every server
+Create the broker id file on every kafka server
 
 ```
 touch /var/lib/zookeeper/myid
 ```
 
-On KFK1
+### On KFK1
 =======
 ```
 cat <<EOF | sudo tee
 1
 EOF
 ```
-On KFK2
+### On KFK2
 =======
 ```
 cat <<EOF | sudo tee
 2
 EOF
 ```
-On KFK3
+### On KFK3
 =======
 ```
 cat <<EOF | sudo tee
