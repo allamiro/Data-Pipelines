@@ -129,15 +129,51 @@ EOF
 Start Zookeeper Service
 
 ```
+
 systemctl daemon-reload
 systemctl start zoo
-systemctl status -l  zoo
+systemctl status -l zoo
+systemctl enable  zoo
 
+
+```
+### Configure KAFKA Brokers 
+
+
+Update KAFKA properties file on every server
+
+### On KFK1
+=======
+
+```
+cat <<EOF | sudo tee /etc/kafka/config/server.properties
+
+
+EOF
 ```
 
 
 
+### On KFK2
+=======
 
+```
+cat <<EOF | sudo tee /etc/kafka/config/server.properties
+
+
+EOF
+```
+
+
+### On KFK3
+=======
+
+```
+cat <<EOF | sudo tee /etc/kafka/config/server.properties
+
+
+EOF
+```
 
 
 
