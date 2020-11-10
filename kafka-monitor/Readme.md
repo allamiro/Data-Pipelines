@@ -8,7 +8,7 @@ An open source project to develop a monitoring system for kafka based on grafana
 # Setup Grafana and Influx DB  Monitoring Server
 
 
-## Create grafana repo file 
+## Create Grafana repo file 
 
 ```
 cat <<-EOF > /etc/yum.repos.d/grafana.repo
