@@ -22,15 +22,13 @@ EOF
 ```
 
 
-#  Install Grafana 
+##  Install Grafana 
 ```
 yum install grafana -y
-```
-
-```
 yum install initscripts urw-fonts wget -y
 ```
 
+## Access Grafana 
 
 
 
