@@ -129,9 +129,22 @@ By default, InfluxDB uses the following network ports:
 TCP port 8086 is available for client-server communication using the InfluxDB API.
 TCP port 8088 is available for the RPC service to perform back up and restore operations.
 ```
-Add influxDB data source to grafana
+### Add influxDB data source to grafana
+In the left menu, click on the Configuration > Data sources section.
+choose InfluxDB as a datasource.
 
 ![alt text](https://github.com/allamiro/KAFKA/blob/master/kafka-monitor/add-influxdb-datasource.PNG)
+
+
+
+![alt text](https://github.com/allamiro/KAFKA/blob/master/kafka-monitor/add-db1.PNG)
+
+
+![alt text](https://github.com/allamiro/KAFKA/blob/master/kafka-monitor/add-db2.PNG)
+
+
+
+
 
 ## Install Telegraf on the KAFKA Server or Kafka Cluster 
 
