@@ -1,9 +1,14 @@
 # Setup One KAFKA Broker
 
-
 ![alt text](https://github.com/allamiro/KAFKA/blob/master/kafka-onebroker.PNG)
 
 
+### Install JAVA 
+
+```
+yum install java -y
+java -version
+```
 
 
 
