@@ -41,8 +41,16 @@ On each server KFK1, KFK2 , KFK3 download Kafka and Zokeeper to the tmp director
 
 ```
 
+On each server extract the Kafka archive file 
+
+```
+
+tar -xzvf kafka_2.13-2.6.0.tgz
+
+```
 
 
+### Configure Zookeeper
 
 
 
