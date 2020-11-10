@@ -208,5 +208,30 @@ systemctl start kafka
 systemctl status -l kafka
 systemctl enable  kafka
 
-``
+```
+
+Add KAFKA TOPICS  
+
+The topics that I will be adding 
+DB : For Database Server logs
+WINDOWS : For Windows Logs
+LINUX: FOR LINUX Rsyslog logs
+NETWORK: For network devices logs ( Firewall , routers , etc )
+APPS: For application logs
+IOT : For internet of things devices logs
+
+
+
+To Create KAFKA topic 
+
+```
+/etc/kafka/bin/kafka-topics --create --zookeeper localhost:2181 --replication-factor 2 --partitions 3 --topic DB
+/etc/kafka/bin/kafka-topics --create --zookeeper localhost:2181 --replication-factor 2 --partitions 3 --topic IOT
+/etc/kafka/bin/kafka-topics --create --zookeeper localhost:2181 --replication-factor 2 --partitions 3 --topic LINUX
+/etc/kafka/bin/kafka-topics --create --zookeeper localhost:2181 --replication-factor 2 --partitions 3 --topic WINDOWS
+/etc/kafka/bin/kafka-topics --create --zookeeper localhost:2181 --replication-factor 2 --partitions 3 --topic NETWORK
+```
+
+
+Start Sending Data to KAFKA 
 
