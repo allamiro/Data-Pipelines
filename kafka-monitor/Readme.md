@@ -90,12 +90,33 @@ systemctl enable influxdb
 ## Configure InfluxDB 
 create influxDB database username and permissions
 
+1. Create the DB account 
+```
+[root@grafana yum.repos.d]# influx
+Connected to http://localhost:8086 version 1.8.3
+InfluxDB shell version: 1.8.3
+> CREATE USER kafka WITH PASSWORD 'kafka' WITH ALL PRIVILEGES
+> SHOW USERS
+user  admin
+----  -----
+kafka true
 
 ```
-
-
+2. Create InfluxDB database for kafka monitoring
+```
+CREATE DATABASE "kafkamonitordb"
+GRANT ALL ON "kafkamonitordb" TO "kafka"
 ```
 
+```
+> show databases
+name: databases
+name
+----
+_internal
+kafkamonitordb
+>
+```
 
 
 ## Connect Grafana to InfluxDB 
@@ -122,6 +143,8 @@ Add influxDB data source to grafana
 
 
 
+## Disclaimer
+This repository also contains a few assets that are not my own works and are stored here for data archival purposes only.So please  do not use any of the resources listed above in a way that would violate the copyright of their creators.
 
 
 
