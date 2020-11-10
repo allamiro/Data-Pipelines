@@ -1,8 +1,11 @@
-# Kafka-Monitor
+# Kafka Monitoring with Grafana 
 An open source project to develop a monitoring system for kafka based on grafana telegram and influxdb
 
 
 # Install Grafana and Influx DB 
+
+
+
 
 ```
 cat <<-EOF > /etc/yum.repos.d/grafana.repo
@@ -17,5 +20,16 @@ sslverify=1
 sslcacert=/etc/pki/tls/certs/ca-bundle.crt
 EOF
 ```
+
+
+
+
+
+
+
+
+
+
+
 
 
