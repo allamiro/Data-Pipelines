@@ -28,13 +28,41 @@ yum install grafana -y
 yum install initscripts urw-fonts wget -y
 ```
 
-## Access Grafana 
+## Start the server
+
+```
+systemctl daemon-reload
+systemctl start grafana-server
+systemctl status grafana-server
+systemctl enable grafana-server
+```
+
+
+
+## Configure Grafana
 
 
 
 
 
 
+## Install InfluxDB
+
+
+
+## Connect Grafana to InfluxDB 
+
+
+
+
+
+## Install Telegraf on the KAFKA Server or Kafka Cluster 
+
+
+
+
+
+## Configure Jolokia 
 
 
 
