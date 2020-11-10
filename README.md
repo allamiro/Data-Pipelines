@@ -130,6 +130,8 @@ Start Zookeeper Service
 
 ```
 systemctl daemon-reload
+systemctl start zoo
+systemctl status -l  zoo
 
 ```
 
