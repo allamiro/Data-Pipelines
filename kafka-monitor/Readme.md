@@ -33,7 +33,13 @@ yum install fontconfig -y
 yum install freetype* -y
 yum install urw-fonts -y
 ```
+## Add firewall rule to allow for Grafana port 3000
 
+Please note if you have configured port forwarding , https, and proxy services you may need to adjust the rule accordingly
+```
+firewall-cmd --permanent --add-port=3000/tcp
+firewall-cmd --reload
+```
 ## Start the server
 
 ```
@@ -66,7 +72,7 @@ EOF
 ```
 
 ```
-yum install influxdb
+yum install influxdb -y
 ```
 
 ## Connect Grafana to InfluxDB 
