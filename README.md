@@ -76,6 +76,8 @@ EOF
 Add Firewall rules
 
 ```
+firewall-cmd --permanent --add-port=2181/tcp
+firewall-cmd --reload
 ```
 
 Create Zookeeper Service file 
