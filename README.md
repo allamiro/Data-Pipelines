@@ -6,6 +6,7 @@
 
 ```
 yum install java -y
+java -version
 
 ```
 
