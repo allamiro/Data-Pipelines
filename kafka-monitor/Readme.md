@@ -194,12 +194,17 @@ systemctl status telegraf
 systemctl enable telegraf
 
 ```
+## Configure KAFKA JMX 
+
 
 
 ## Configure Jolokia 
 
-
-
+```
+cd /tmp
+wget https://repo1.maven.org/maven2/org/jolokia/jolokia-jvm/1.6.2/jolokia-jvm-1.6.2.jar
+mv jolokia-jvm-1.6.2.jar /usr/share/java/jolokia-jvm-agent.jar
+```
 
 
 
