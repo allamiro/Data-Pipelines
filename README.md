@@ -81,6 +81,33 @@ Add Firewall rules
 firewall-cmd --permanent --add-port=2181/tcp
 firewall-cmd --reload
 ```
+Create the id file on every server
+
+```
+touch /var/lib/zookeeper/myid
+```
+
+On KFK1
+=======
+```
+cat <<EOF | sudo tee
+1
+EOF
+```
+On KFK2
+=======
+```
+cat <<EOF | sudo tee
+2
+EOF
+```
+On KFK3
+=======
+```
+cat <<EOF | sudo tee
+3
+EOF
+```
 
 Create Zookeeper Service file 
 
