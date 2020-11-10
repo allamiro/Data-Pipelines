@@ -1,6 +1,8 @@
 # Kafka Monitoring with Grafana 
+An open source project to develop a monitoring system for kafka based on grafana telegram and influxdb.
+
 ![alt text](https://github.com/allamiro/KAFKA/blob/master/kafka-monitor/image.png)
-An open source project to develop a monitoring system for kafka based on grafana telegram and influxdb
+
 
 
 # Setup Grafana and Influx DB  Monitoring Server
@@ -49,7 +51,20 @@ systemctl enable grafana-server
 
 ## Install InfluxDB
 
+```
+cat <<EOF | sudo tee /etc/yum.repos.d/influxdb.repo
+[influxdb]
+name = InfluxDB Repository - RHEL \$releasever
+baseurl = https://repos.influxdata.com/rhel/\$releasever/\$basearch/stable
+enabled = 1
+gpgcheck = 1
+gpgkey = https://repos.influxdata.com/influxdb.key
+EOF
+```
 
+```
+yum install influxdb
+```
 
 ## Connect Grafana to InfluxDB 
 
