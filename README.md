@@ -3,7 +3,7 @@
 ![alt text](https://github.com/allamiro/KAFKA/blob/master/kafka-cluster.PNG)
 
 
-## On the  First Server
+## On Each Server
 
 ### Install JAVA 
 
