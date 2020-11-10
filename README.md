@@ -79,6 +79,7 @@ Add the following Firewall rules on every server
 
 ```
 firewall-cmd --permanent --add-port=2181/tcp
+firewall-cmd --add-port=2888-3888/tcp --permanent
 firewall-cmd --reload
 ```
 Create the broker id file on every kafka server
