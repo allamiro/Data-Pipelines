@@ -191,7 +191,12 @@ ExecStart=/etc/kafka/bin/kafka-server-start.sh /etc/kafka/config/server.properti
 Restart=always
 EOF
 ```
+Add the following Firewall rules on every server 
 
+```
+firewall-cmd --permanent --add-port=9092/tcp
+firewall-cmd --reload
+```
 
 
 Start KAFKA Service
