@@ -148,13 +148,40 @@ Click on Save and Test  and if every thing is working you will see the message D
 ![alt text](https://github.com/allamiro/KAFKA/blob/master/kafka-monitor/working-datasourceinfluxdb.PNG)
 
 ```
-Please note if you using a sepearate server for your database you may need to update your network firewall and server firewall to allow grafana to access port 8086 or your influxdb port
+Please note if you using a sepearate server for your
+database you may need to update your network firewall and server firewall to allow
+grafana to access port 8086 or your influxdb port
 ```
 
 ## Install Telegraf on the KAFKA Server or Kafka Cluster 
 
+1. Create Telegraf repo file 
 
+```
+cat <<EOF | sudo tee /etc/yum.repos.d/telegraf.repo
+[influxdb]
+name = InfluxDB Repository - RHEL \$releasever
+baseurl = https://repos.influxdata.com/rhel/\$releasever/\$basearch/stable
+enabled = 1
+gpgcheck = 1
+gpgkey = https://repos.influxdata.com/influxdb.key
+EOF
+```
+2. Install Telegraf 
+```
+yum install telegraf -y
 
+```
+
+3. Start the influxDB server
+
+```
+
+sudo systemctl start telegraf
+systemctl status telegraf
+systemctl enable telegraf
+
+```
 
 
 ## Configure Jolokia 
