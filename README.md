@@ -10,9 +10,21 @@ yum install java -y
 java -version
 ```
 
+### Download KAFKA
 
+```
+cd /tmp
+wget https://downloads.apache.org/kafka/2.6.0/kafka_2.13-2.6.0.tgz
 
+```
 
+Extract the Kafka archive file 
+
+```
+
+tar -xzvf kafka_2.13-2.6.0.tgz
+
+```
 
 
 
@@ -36,7 +48,6 @@ On each server KFK1, KFK2 , KFK3 download Kafka and Zokeeper to the tmp director
 
 ```
 cd /tmp
-wget https://downloads.apache.org/zookeeper/stable/apache-zookeeper-3.5.8-bin.tar.gz
 wget https://downloads.apache.org/kafka/2.6.0/kafka_2.13-2.6.0.tgz
 
 ```
