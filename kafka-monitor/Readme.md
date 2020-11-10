@@ -29,6 +29,9 @@ EOF
 ```
 yum install grafana -y
 yum install initscripts urw-fonts wget -y
+yum install fontconfig -y
+yum install freetype* -y
+yum install urw-fonts -y
 ```
 
 ## Start the server
