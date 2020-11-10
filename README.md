@@ -35,9 +35,9 @@ java -version
 On each server KFK1, KFK2 , KFK3 download Kafka and Zokeeper to the tmp directory 
 
 ```
-# cd /tmp
-# wget https://downloads.apache.org/zookeeper/stable/apache-zookeeper-3.5.8-bin.tar.gz
-# wget https://downloads.apache.org/kafka/2.6.0/kafka_2.13-2.6.0.tgz
+cd /tmp
+wget https://downloads.apache.org/zookeeper/stable/apache-zookeeper-3.5.8-bin.tar.gz
+wget https://downloads.apache.org/kafka/2.6.0/kafka_2.13-2.6.0.tgz
 
 ```
 
@@ -53,8 +53,13 @@ tar -xzvf kafka_2.13-2.6.0.tgz
 ### Configure Zookeeper
 
 
+```
+mv kafka_2.13-2.6.0 /etc/kafka
+
+mkdir -p /var/lib/zookeeper/
 
 
+```
 
 
 
