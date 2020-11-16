@@ -195,16 +195,21 @@ systemctl enable telegraf
 
 ```
 ## Configure KAFKA JMX 
+##################################################
+## MONITORING APPLICATION 
+##################################################
+## Install and Configure JMXTRANS to read kafka metrics
 
 
-
-## Configure Jolokia 
+## Install and Configure Jolokia to read kafka metrics
 
 ```
 cd /tmp
 wget https://repo1.maven.org/maven2/org/jolokia/jolokia-jvm/1.6.2/jolokia-jvm-1.6.2.jar
 mv jolokia-jvm-1.6.2.jar /usr/share/java/jolokia-jvm-agent.jar
 ```
+
+
 
 
 
