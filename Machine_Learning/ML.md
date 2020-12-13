@@ -22,4 +22,6 @@ https://medium.com/mlpoint/numpy-for-machine-learning-211a3e58b574
 
 https://towardsdatascience.com/all-the-numpy-you-need-to-supercharge-your-deep-learning-code-e7a22fe4ede2
 
+https://pythonprogramming.net/forecasting-predicting-machine-learning-tutorial/
+
 
