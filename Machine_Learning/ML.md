@@ -31,3 +31,4 @@ https://www.analyticsvidhya.com/blog/2016/02/time-series-forecasting-codes-pytho
 
 
 https://arxiv.org/pdf/2005.12019.pdf
+https://www.hindawi.com/journals/scn/2019/2182615/
