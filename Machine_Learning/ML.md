@@ -27,3 +27,7 @@ https://pythonprogramming.net/forecasting-predicting-machine-learning-tutorial/
 
 
 https://www.analyticsvidhya.com/blog/2016/02/time-series-forecasting-codes-python/
+
+
+
+https://arxiv.org/pdf/2005.12019.pdf
