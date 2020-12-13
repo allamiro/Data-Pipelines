@@ -25,3 +25,5 @@ https://towardsdatascience.com/all-the-numpy-you-need-to-supercharge-your-deep-l
 https://pythonprogramming.net/forecasting-predicting-machine-learning-tutorial/
 
 
+
+https://www.analyticsvidhya.com/blog/2016/02/time-series-forecasting-codes-python/
