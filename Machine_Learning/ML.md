@@ -34,3 +34,7 @@ https://arxiv.org/pdf/2005.12019.pdf
 https://www.hindawi.com/journals/scn/2019/2182615/
 
 https://publications.waset.org/10004242/malware-beaconing-detection-by-mining-large-scale-dns-logs-for-targeted-attack-identification
+
+https://arxiv.org/ftp/arxiv/papers/1802/1802.07228.pdf
+https://www.sciencedirect.com/science/article/abs/pii/S1353485820300301
+
