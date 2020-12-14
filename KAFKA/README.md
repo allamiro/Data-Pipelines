@@ -1,6 +1,6 @@
 # Setup One KAFKA Broker
 
-![alt text](https://github.com/allamiro/KAFKA/blob/master/kafka-onebroker.PNG)
+![alt text](https://github.com/allamiro/Data-Pipelines/blob/master/KAFKA/kafka-onebroker.PNG)
 
 
 ### Install JAVA 
@@ -30,7 +30,7 @@ tar -xzvf kafka_2.13-2.6.0.tgz
 
 # Setup kafka  Cluster 
 
-![alt text](https://github.com/allamiro/KAFKA/blob/master/kafka-cluster.PNG)
+![alt text](https://github.com/allamiro/Data-Pipelines/blob/master/KAFKA/kafka-cluster.PNG)
 
 
 ## On Each Server
