@@ -1,3 +1,3 @@
 # Data Pipelines
-Every thing about designing installing and implementing data pipelines  and architecture.
+Every thing about designing installing and implementing data pipelines  and architecture according to best practices.
 
