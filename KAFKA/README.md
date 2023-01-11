@@ -33,7 +33,7 @@ tar -xzvf kafka_2.13-2.6.0.tgz
 ![alt text](https://github.com/allamiro/Data-Pipelines/blob/master/KAFKA/kafka-cluster.PNG)
 
 
-## On Each Server
+## On Each Kafka Server
 
 ### Install JAVA 
 
