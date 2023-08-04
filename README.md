@@ -1,4 +1,5 @@
 # Data Pipelines
+## Description
 Every thing about designing installing and implementing data pipelines  and architecture according to best practices.
 
 Data pipeline architecture best practices refer to the recommended principles and strategies that should be used to design, build, and maintain an efficient, scalable, and reliable data pipeline. Some of the best practices for data pipeline architecture include:
@@ -10,4 +11,6 @@ Data pipeline architecture best practices refer to the recommended principles an
 * Implement data security and privacy measures: Implement security measures such as access control, encryption, and authentication to protect data from unauthorized access and ensure compliance with data privacy regulations.
 * Monitor and optimize performance: Monitor pipeline performance and optimize for efficiency and scalability. This can involve analyzing performance metrics, identifying bottlenecks, and optimizing data flows.
 * Document and test: Document the pipeline architecture, code, and dependencies, and ensure that the pipeline is thoroughly tested and validated before it is put into production.
+
+## Diagram 
 
