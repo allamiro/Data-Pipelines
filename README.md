@@ -20,7 +20,7 @@ Data pipeline architecture best practices refer to the recommended principles an
            |                     |                        |                       |                      |                       |
            |                     |                        |                       |                      |                       |
            v                     v                        v                       v                      v                       v
-    [Files, APIs,         [Kafka, Flume,         [Spark, Flink,           [SQL, NoSQL,         [R, Python, SQL,         [Tableau,
+    [Files, APIs,         [Kafka, Elastic Agent, Flume,         [Spark, Flink,           [Elasticsearch ,SQL, NoSQL,         [R, Python, SQL, Kibana        [ Tableau,
      Databases,           RabbitMQ, Logstash,     Hadoop, etc.]            Hadoop, etc.]         Machine Learning]        PowerBI,
-     IoT, etc.]               etc.]                                                                                            Excel, etc.]
+     IoT, etc.]               etc.]                                                                                       Excel, etc.]
 
