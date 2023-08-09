@@ -8,7 +8,6 @@ client4.local.domain,22
 collector1.local.domain,22
 collector2.local.domain,22
 
-
 [DataIngestion]
 ingestor1.local.domain,22
 ingestor2.local.domain,22
