@@ -14,3 +14,13 @@ Data pipeline architecture best practices refer to the recommended principles an
 
 ## Diagram 
 
+    +--------------+      +--------------+       +-----------------+      +------------+      +----------------+      +----------------+
+    | Data Sources | ---> | Data Ingestion| ---> | Data Processing  | ---> | Data Storage| ---> | Data Analysis  | ---> | Data Visualize |
+    +--------------+      +--------------+       +-----------------+      +------------+      +----------------+      +----------------+
+           |                     |                        |                       |                      |                       |
+           |                     |                        |                       |                      |                       |
+           v                     v                        v                       v                      v                       v
+    [Files, APIs,         [Kafka, Flume,         [Spark, Flink,           [SQL, NoSQL,         [R, Python, SQL,         [Tableau,
+     Databases,           RabbitMQ, Logstash,     Hadoop, etc.]            Hadoop, etc.]         Machine Learning]        PowerBI,
+     IoT, etc.]               etc.]                                                                                            Excel, etc.]
+
