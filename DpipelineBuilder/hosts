@@ -1,6 +1,8 @@
 [DataSources]
 client1.local.domain,22
 client2.local.domain,22
+client3.local.domain,22
+client4.local.domain,22
 
 [DataCollection]
 collector1.local.domain,22
@@ -17,11 +19,12 @@ streamer2.local.domain,22
 streamer3.local.domain,22
 
 [DataProcessing]
-
+processor1.local.domain,22
 
 [DataStorage]
 storage1.local.domain,22
 storage2.local.domain,22
 
 [DataVisualization]
-
+visualizer1.local.domain,22
+visualizer2.local.domain,22
