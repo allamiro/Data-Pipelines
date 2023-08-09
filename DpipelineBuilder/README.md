@@ -15,20 +15,20 @@ This is an attempt to automate the building of a data pipeline  utilizing the to
 
 ## The tools:
 
-| Stage              | Component                 | Application             |
-|--------------------|---------------------------|-------------------------|
-| DataSources        | client1.local.domain      |                         |
-| DataSources        | client2.local.domain      |                         |
-| DataCollection     | collector1.local.domain   |                         |
-| DataIngestion      | ingestor1.local.domain    |                         |
-| DataStreaming      | streamer1.local.domain    |                         |
-| DataStreaming      | streamer2.local.domain    |                         |
-| DataStreaming      | streamer3.local.domain    |                         |
-| DataProcessing     | processor1.local.domain   |                         |
-| DataStorage        | storage1.local.domain     |                         |
-| DataStorage        | storage2.local.domain     |                         |
-| DataVisualization  | visualizer1.local.domain  |                         |
-| DataVisualization  | visualizer2.local.domain  |                         |
+| Stage              | Component                 | Collection Tool         | Application             |
+|--------------------|---------------------------|-------------------------|-------------------------|
+| DataSources        | client1.local.domain      | rsyslog                 | Apache Logs             |
+| DataSources        | client2.local.domain      | syslog                  | CISCO                   |
+| DataCollection     | collector1.local.domain   | fluentd                 |                         |
+| DataIngestion      | ingestor1.local.domain    | logstash                |                         |
+| DataStreaming      | streamer1.local.domain    | rabbitq                 |                         |
+| DataStreaming      | streamer2.local.domain    | rabbitq                 |                         |
+| DataStreaming      | streamer3.local.domain    | rabbitq                 |                         |
+| DataProcessing     | processor1.local.domain   |                         |                         |
+| DataStorage        | storage1.local.domain     |                         |                         |
+| DataStorage        | storage2.local.domain     |                         |                         |
+| DataVisualization  | visualizer1.local.domain  |                         |                         |
+| DataVisualization  | visualizer2.local.domain  |                         |                         |
 
 
 ## Diagram for client 1 and client 2 :
