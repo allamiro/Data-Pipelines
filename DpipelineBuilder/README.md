@@ -12,7 +12,7 @@ client2.local.domain --->+   +--> collector1.local.domain ---> ingestor1.local.d
                                                                                                                                     |
                                                                                                                                     | storage1.local.domain
                                                                                                                                     | storage2.local.domain
-                                                                                                                                    +--> [DataVisualization]
+                                                                                                                                    +
                                                                                                                                     | visualizer1.local.domain
                                                                                                                                     | visualizer2.local.domain
                                                                                                                                     +---------------------------
