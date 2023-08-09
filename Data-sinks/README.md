@@ -1,5 +1,7 @@
 ## Data  Sinks
+
 Data sinks are destinations where processed data is sent. 
+
 | Data Sink Type      | Description                                                     | Common Tools/Systems            |
 |---------------------|-----------------------------------------------------------------|---------------------------------|
 | Relational Database | Stores structured data in tables                                | MySQL, PostgreSQL, SQL Server   |
