@@ -22,3 +22,12 @@ Data pipeline architecture best practices refer to the recommended principles an
     [Files, APIs,       [Elastic Agent, ArcSight Agent, other    [Kafka, RabbitMQ,  [Spark, Hadoop, etc.] [NoSQL, Hadoop, Elasticsearch] [R, Python, SQL, ML] [Tableau, PowerBI,
      Databases,          collection tools, etc.]                  Logstash, etc.]                                                                             , Kibana, etc.]
      IoT, etc.]      
+
+### Data Pipeline Phases
+- Data Sources:
+- Data Collection:
+- Data Ingestion:
+- Data Processing:
+- Data Storage:
+- Data Analysis:
+- Data Visualization: 
