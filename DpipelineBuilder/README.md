@@ -15,15 +15,15 @@ This is an attempt to automate the building of a data pipeline  utilizing the to
 
 ## The tools:
 
-| Stage              | Component                 | Collection Tool         | Application             |
+| Stage              | Component                 | Collection /Agent Tool  | Application             |
 |--------------------|---------------------------|-------------------------|-------------------------|
 | DataSources        | client1.local.domain      | rsyslog                 | Apache Logs             |
-| DataSources        | client2.local.domain      | syslog                  | CISCO                   |
-| DataCollection     | collector1.local.domain   | fluentd                 |                         |
+| DataSources        | client2.local.domain      | syslog                  | CISCO  Logs             |
+| DataCollection     | collector1.local.domain   | fluentd                 | fluentd  listening  port|
 | DataIngestion      | ingestor1.local.domain    | logstash                |                         |
-| DataStreaming      | streamer1.local.domain    | rabbitq                 |                         |
-| DataStreaming      | streamer2.local.domain    | rabbitq                 |                         |
-| DataStreaming      | streamer3.local.domain    | rabbitq                 |                         |
+| DataStreaming      | streamer1.local.domain    | rabbitq                 |   port           |
+| DataStreaming      | streamer2.local.domain    | rabbitq                 |   port                      |
+| DataStreaming      | streamer3.local.domain    | rabbitq                 |   port                      |
 | DataProcessing     | processor1.local.domain   |                         |                         |
 | DataStorage        | storage1.local.domain     |                         |                         |
 | DataStorage        | storage2.local.domain     |                         |                         |
