@@ -209,7 +209,12 @@ wget https://repo1.maven.org/maven2/org/jolokia/jolokia-jvm/1.6.2/jolokia-jvm-1.
 mv jolokia-jvm-1.6.2.jar /usr/share/java/jolokia-jvm-agent.jar
 ```
 
+## Exposing JMX
 
+```
+export JMX_PORT = 9
+KAFKA_JMX_OPTS=""
+```
 
 
 
