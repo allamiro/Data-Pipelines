@@ -216,7 +216,16 @@ mv jolokia-jvm-1.6.2.jar /usr/share/java/jolokia-jvm-agent.jar
 ## Configure Telegraf to read Kafka Metrics
 
 Update telegraf with KAFKA metrics
-
+### Monitoring Metrics
+1. Bytes/Sec
+2. Bytes/Message
+3. Consumer Fetch time ms
+4. Producer Request time ms
+5. Log Flush time ms
+6. Producer Requets ms
+7. Consumer Fetches  /sec
+8. Messages in  / Sec 24 hour change %
+9. Consumer Fetches 24 hr change % 
 
 
 
