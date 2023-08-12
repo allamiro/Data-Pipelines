@@ -5,10 +5,10 @@ Apache NiFi (NiFi stands for "Niagara Files") is an open-source software project
 ### Apache NiFi Role in Data Pipeline
 Apache NiFi can fit into different stages of data pipelines :
 
-1. Data Ingestion:
-2. Data Transformation:
-3. Data ROuting and Decission Making:
-4. Data Buffering : 
-5. Integration with other Systems:
+1. Data Ingestion
+2. Data Transformation
+3. Data ROuting and Decission Making
+4. Data Buffering 
+5. Integration with other Systems
 6. Security
 7. Scalability
