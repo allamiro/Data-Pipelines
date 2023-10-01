@@ -22,6 +22,14 @@ tar -xzvf kafka_2.13-3.5.1.tgz
 ```
 
 
+Extract the Kafka archive file 
+
+```
+mv kafka_2.13-3.5.1.tgz /etc/kafka
+
+```
+
+
 
 # Setup kafka  Cluster 
 
