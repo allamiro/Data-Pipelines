@@ -1,0 +1,100 @@
+- name: Install Kafka Cluster
+  hosts: kafka
+  become: yes
+  tasks:
+    - name: Install Java
+      yum:
+        name: java
+        state: present
+    - name: Check Java Version
+      command: java -version
+      register: java_version
+      changed_when: false
+    - name: Download Kafka and Zookeeper
+      get_url:
+        url: https://downloads.apache.org/kafka/3.6.1/kafka_2.13-3.6.1.tgz
+        dest: /tmp/kafka_2.13-3.6.1.tgz
+        mode: '0644'
+    - name: Extract Kafka Archive
+      unarchive:
+        src: /tmp/kafka_2.13-3.6.1.tgz
+        dest: /tmp/
+        remote_src: yes
+    - name: Move Kafka to the desired directory
+      command:
+        cmd: mv /tmp/kafka_2.13-3.6.1 /etc/kafka
+      args:
+        creates: /etc/kafka
+    - name: Create Kafka log directory
+      file:
+        path: /var/log/kafka-logs
+        state: directory
+        mode: '0755'
+    - name: Create zookeeper directory
+      file:
+        path: /var/lib/zookeeper
+        state: directory
+        mode: '0755'
+    - name: Update Kafka properties file on each server
+      template:
+        src: server.properties.j2
+        dest: /etc/kafka/config/server.properties
+    - name: Create Kafka service file
+      template:
+        src: kafka.service.j2
+        dest: /etc/systemd/system/kafka.service
+      notify: reload systemd
+    - name: Create Zookeeper service file
+      template:
+        src: zoo.service.j2
+        dest: /etc/systemd/system/zoo.service
+      notify: reload systemd
+    - name: Create the broker id file on every Kafka server
+      copy:
+        dest: /var/lib/zookeeper/myid
+        content: "{{ play_hosts.index(inventory_hostname) + 1 }}"
+        mode: '0644'
+    - name: Configure Zookeeper
+      block:
+        - name: Create Zookeeper data directory
+          file:
+            path: /var/lib/zookeeper
+            state: directory
+            mode: '0755'
+        - name: Update Zookeeper properties template
+          template:
+            src: zookeeper.properties.j2
+            dest: /etc/kafka/config/zookeeper.properties
+          loop: "{{ groups['kafka'] }}"
+          loop_control:
+            loop_var: server
+          when: inventory_hostname == server
+
+    - name: Add firewall rules for Zookeeper and Kafka
+      block:
+        - name: Allow Zookeeper client connections
+          firewalld:
+            port: "{{ item }}/tcp"
+            permanent: yes
+            state: enabled
+            immediate: yes
+          loop:
+            - 2181
+            - 9092
+            - 9093
+          notify: Reload firewall
+        - name: Allow Zookeeper server connections
+          firewalld:
+            port: 2888-3888/tcp
+            permanent: yes
+            state: enabled
+  handlers:
+    - name: reload systemd
+      systemd:
+        daemon_reload: yes
+    - name: Reload firewall
+      command: firewall-cmd --reload
+    - name: Restart Zoo Service
+      command: systemctl restart zoo
+    - name: Restart Kafka Service
+      command: systemctl restart kafka
