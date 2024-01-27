@@ -1,0 +1,10 @@
+[Unit]
+Description=Kafka Service
+
+[Service]
+Type=simple
+ExecStart=sh /etc/kafka/bin/kafka-server-start.sh /etc/kafka/config/server.properties
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
