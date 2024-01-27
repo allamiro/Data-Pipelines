@@ -269,5 +269,36 @@ Topic: IOT	TopicId: iNT2DcpfRdOoDRqNyAAjbQ	PartitionCount: 3	ReplicationFactor: 
 
 
 ```
+
+
+```
+sh /etc/kafka/bin/kafka-topics.sh  --describe --bootstrap-server kafka1.example.com:9092 
+Topic: APPLICATIONS	TopicId: IqhV7b88R7WmsR896YM5Cw	PartitionCount: 3	ReplicationFactor: 2	Configs: segment.bytes=1073741824
+	Topic: APPLICATIONS	Partition: 0	Leader: 1	Replicas: 1,2	Isr: 1,2
+	Topic: APPLICATIONS	Partition: 1	Leader: 2	Replicas: 2,3	Isr: 2,3
+	Topic: APPLICATIONS	Partition: 2	Leader: 3	Replicas: 3,1	Isr: 3,1
+Topic: WINDOWS	TopicId: kxPiuKD4RnKagBcmP1gxCg	PartitionCount: 3	ReplicationFactor: 2	Configs: segment.bytes=1073741824
+	Topic: WINDOWS	Partition: 0	Leader: 3	Replicas: 3,1	Isr: 3,1
+	Topic: WINDOWS	Partition: 1	Leader: 1	Replicas: 1,2	Isr: 1,2
+	Topic: WINDOWS	Partition: 2	Leader: 2	Replicas: 2,3	Isr: 2,3
+Topic: NETWORK	TopicId: y0OehbWGS_OxKgccKKRKZg	PartitionCount: 3	ReplicationFactor: 2	Configs: segment.bytes=1073741824
+	Topic: NETWORK	Partition: 0	Leader: 1	Replicas: 1,3	Isr: 1,3
+	Topic: NETWORK	Partition: 1	Leader: 2	Replicas: 2,1	Isr: 2,1
+	Topic: NETWORK	Partition: 2	Leader: 3	Replicas: 3,2	Isr: 3,2
+Topic: LINUX	TopicId: jRYRP5EyTHeMGJZNYejguw	PartitionCount: 3	ReplicationFactor: 2	Configs: segment.bytes=1073741824
+	Topic: LINUX	Partition: 0	Leader: 3	Replicas: 3,1	Isr: 3,1
+	Topic: LINUX	Partition: 1	Leader: 1	Replicas: 1,2	Isr: 1,2
+	Topic: LINUX	Partition: 2	Leader: 2	Replicas: 2,3	Isr: 2,3
+Topic: DB	TopicId: r7zjkfxwQxmcXSx2o0s5_Q	PartitionCount: 3	ReplicationFactor: 2	Configs: segment.bytes=1073741824
+	Topic: DB	Partition: 0	Leader: 2	Replicas: 2,1	Isr: 2,1
+	Topic: DB	Partition: 1	Leader: 3	Replicas: 3,2	Isr: 3,2
+	Topic: DB	Partition: 2	Leader: 1	Replicas: 1,3	Isr: 1,3
+Topic: IOT	TopicId: iNT2DcpfRdOoDRqNyAAjbQ	PartitionCount: 3	ReplicationFactor: 2	Configs: segment.bytes=1073741824
+	Topic: IOT	Partition: 0	Leader: 2	Replicas: 2,1	Isr: 2,1
+	Topic: IOT	Partition: 1	Leader: 3	Replicas: 3,2	Isr: 3,2
+	Topic: IOT	Partition: 2	Leader: 1	Replicas: 1,3	Isr: 1,3
+
+
+```
 Start Sending Data to KAFKA 
 
