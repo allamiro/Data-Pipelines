@@ -105,21 +105,21 @@ touch /var/lib/zookeeper/myid
 ### On KFK1
 =======
 ```
-cat <<EOF | sudo tee
+cat <<EOF | sudo tee /var/lib/zookeeper/myid
 1
 EOF
 ```
 ### On KFK2
 =======
 ```
-cat <<EOF | sudo tee
+cat <<EOF | sudo tee /var/lib/zookeeper/myid
 2
 EOF
 ```
 ### On KFK3
 =======
 ```
-cat <<EOF | sudo tee
+cat <<EOF | sudo tee /var/lib/zookeeper/myid
 3
 EOF
 ```
