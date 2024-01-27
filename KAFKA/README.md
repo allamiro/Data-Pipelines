@@ -235,22 +235,38 @@ IOT : For internet of things devices logs
 To Create KAFKA topic 
 
 ```
-/etc/kafka/bin/kafka-topics --create --zookeeper localhost:2181 --replication-factor 2 --partitions 3 --topic DB
-/etc/kafka/bin/kafka-topics --create --zookeeper localhost:2181 --replication-factor 2 --partitions 3 --topic IOT
-/etc/kafka/bin/kafka-topics --create --zookeeper localhost:2181 --replication-factor 2 --partitions 3 --topic LINUX
-/etc/kafka/bin/kafka-topics --create --zookeeper localhost:2181 --replication-factor 2 --partitions 3 --topic WINDOWS
-/etc/kafka/bin/kafka-topics --create --zookeeper localhost:2181 --replication-factor 2 --partitions 3 --topic NETWORK
+sh /etc/kafka/bin/kafka-topics.sh --create --bootstrap-server kafka1.example.com:9092 --replication-factor 2 --partitions 3 --topic  DB
+sh /etc/kafka/bin/kafka-topics.sh --create --bootstrap-server kafka1.example.com:9092 --replication-factor 2 --partitions 3 --topic  IOT
+sh /etc/kafka/bin/kafka-topics.sh --create --bootstrap-server kafka1.example.com:9092 --replication-factor 2 --partitions 3 --topic  LINUX
+sh /etc/kafka/bin/kafka-topics.sh --create --bootstrap-server kafka1.example.com:9092 --replication-factor 2 --partitions 3 --topic WINDOWS
+sh /etc/kafka/bin/kafka-topics.sh --create --bootstrap-server kafka1.example.com:9092 --replication-factor 2 --partitions 3 --topic NETWORK
+
 ```
 
 To check the replication of your topics 
 
 ```
-/etc/kafka/bin/kafka-topics.sh --describe --topic WINDOWS  --zookeeper  localhost:2181
-OpenJDK 64-Bit Server VM warning: If the number of processors is expected to increase from one, then you should configure the number of parallel GC threads appropriately using -XX:ParallelGCThreads=N
-Topic: WINDOWS  PartitionCount: 3       ReplicationFactor: 2    Configs:
-        Topic: WINDOWS  Partition: 0    Leader: 3       Replicas: 3,1   Isr: 3,1
-        Topic: WINDOWS  Partition: 1    Leader: 1       Replicas: 1,2   Isr: 1,2
-        Topic: WINDOWS  Partition: 2    Leader: 2       Replicas: 2,3   Isr: 2,3
+ sh /etc/kafka/bin/kafka-topics.sh  --describe --topic DB --bootstrap-server kafka1.example.com:9092 
+Topic: DB	TopicId: r7zjkfxwQxmcXSx2o0s5_Q	PartitionCount: 3	ReplicationFactor: 2	Configs: segment.bytes=1073741824
+	Topic: DB	Partition: 0	Leader: 2	Replicas: 2,1	Isr: 2,1
+	Topic: DB	Partition: 1	Leader: 3	Replicas: 3,2	Isr: 3,2
+	Topic: DB	Partition: 2	Leader: 1	Replicas: 1,3	Isr: 1,3
+[root@kafka1 ~]# sh /etc/kafka/bin/kafka-topics.sh  --describe --topic WINDOWS --bootstrap-server kafka1.example.com:9092 
+Topic: WINDOWS	TopicId: kxPiuKD4RnKagBcmP1gxCg	PartitionCount: 3	ReplicationFactor: 2	Configs: segment.bytes=1073741824
+	Topic: WINDOWS	Partition: 0	Leader: 3	Replicas: 3,1	Isr: 3,1
+	Topic: WINDOWS	Partition: 1	Leader: 1	Replicas: 1,2	Isr: 1,2
+	Topic: WINDOWS	Partition: 2	Leader: 2	Replicas: 2,3	Isr: 2,3
+[root@kafka1 ~]# sh /etc/kafka/bin/kafka-topics.sh  --describe --topic LINUX --bootstrap-server kafka1.example.com:9092 
+Topic: LINUX	TopicId: jRYRP5EyTHeMGJZNYejguw	PartitionCount: 3	ReplicationFactor: 2	Configs: segment.bytes=1073741824
+	Topic: LINUX	Partition: 0	Leader: 3	Replicas: 3,1	Isr: 3,1
+	Topic: LINUX	Partition: 1	Leader: 1	Replicas: 1,2	Isr: 1,2
+	Topic: LINUX	Partition: 2	Leader: 2	Replicas: 2,3	Isr: 2,3
+[root@kafka1 ~]# sh /etc/kafka/bin/kafka-topics.sh  --describe --topic IOT --bootstrap-server kafka1.example.com:9092 
+Topic: IOT	TopicId: iNT2DcpfRdOoDRqNyAAjbQ	PartitionCount: 3	ReplicationFactor: 2	Configs: segment.bytes=1073741824
+	Topic: IOT	Partition: 0	Leader: 2	Replicas: 2,1	Isr: 2,1
+	Topic: IOT	Partition: 1	Leader: 3	Replicas: 3,2	Isr: 3,2
+	Topic: IOT	Partition: 2	Leader: 1	Replicas: 1,3	Isr: 1,3
+
 
 ```
 Start Sending Data to KAFKA 
