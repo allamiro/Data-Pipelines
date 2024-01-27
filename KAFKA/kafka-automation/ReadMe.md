@@ -1,4 +1,4 @@
-## Kafka
+## Kafka Automation Cluster Playbook 
 Apache Kafka is an open-source stream-processing software platform developed by the Apache Software Foundation, written in Scala and Java.  The playbook here is developed to deploy a 3 servers kafka cluster with plaintext. 
 
 
