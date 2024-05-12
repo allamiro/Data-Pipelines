@@ -136,6 +136,9 @@ WantedBy=multi-user.target
 Type=simple
 ExecStart=/etc/kafka/bin/zookeeper-server-start.sh /etc/kafka/config/zookeeper.properties
 Restart=always
+
+[Install]
+WantedBy=multi-user.target
 EOF
 ```
 
@@ -434,6 +437,9 @@ WantedBy=multi-user.target
 Type=simple
 ExecStart=/etc/kafka/bin/kafka-server-start.sh /etc/kafka/config/server.properties
 Restart=always
+
+[Install]
+WantedBy=multi-user.target
 EOF
 ```
 * Add the following Firewall rules on every server 
