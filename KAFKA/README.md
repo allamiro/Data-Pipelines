@@ -5,7 +5,7 @@
 
 ### Install JAVA 
 ```
-yum install wget unzip java -y
+yum install wget tar  unzip java -y
 java -version
 ```
 ### Download KAFKA
@@ -41,7 +41,7 @@ mv kafka_2.12-3.6.2.tgz /etc/kafka
 ### Install JAVA 
 
 ```
-yum install java -y
+yum install wget tar unzip java -y
 java -version
 ```
 
