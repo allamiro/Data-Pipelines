@@ -6,11 +6,20 @@ if [ ! -f "$SERVER_FILE" ]; then
     exit 1
 fi
 
-# Loop through each server listed in the file and execute the update command
+# Loop through each server listed in the file
 while read -r server; do
     if [ -z "$server" ]; then
         continue # skip empty lines
     fi
-    echo "Updating files on $server..."
-    ssh "$server" "$UPDATE_COMMAND"
+    echo "Connecting to $server..."
+    ssh "$server" <<- 'SSHCOMMANDS'
+        echo "Appending text to a file..."
+        echo "Sample text" >> /path/to/remote/file.txt
+        echo "Listing directory contents..."
+        ls -l /path/of/interest
+        echo "Checking disk usage..."
+        df -h
+        echo "Updating system packages..."
+        sudo apt-get update && sudo apt-get upgrade -y
+SSHCOMMANDS
 done < "$SERVER_FILE"
