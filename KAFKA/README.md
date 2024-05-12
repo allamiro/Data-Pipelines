@@ -134,11 +134,12 @@ WantedBy=multi-user.target
 
 [Service]
 Type=simple
-ExecStart=/etc/kafka/bin/zookeeper-server-start.sh /etc/kafka/config/zookeeper.properties
+ExecStart=/bin/sh /etc/kafka/bin/zookeeper-server-start.sh /etc/kafka/config/zookeeper.properties
 Restart=always
 
 [Install]
 WantedBy=multi-user.target
+
 EOF
 ```
 
@@ -435,7 +436,7 @@ WantedBy=multi-user.target
 
 [Service]
 Type=simple
-ExecStart=/etc/kafka/bin/kafka-server-start.sh /etc/kafka/config/server.properties
+ExecStart=/bin/sh /etc/kafka/bin/kafka-server-start.sh /etc/kafka/config/server.properties
 Restart=always
 
 [Install]
