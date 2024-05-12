@@ -5,27 +5,27 @@
 
 ### Install JAVA 
 ```
-yum install java -y
+yum install wget unzip java -y
 java -version
 ```
 ### Download KAFKA
 
 ```
 cd /tmp
-wget https://downloads.apache.org/kafka/3.6.1/kafka_2.13-3.6.1.tgz
+wget https://downloads.apache.org/kafka/3.6.2/kafka_2.12-3.6.2.tgz
 ```
 
 Extract the Kafka archive file 
 
 ```
-tar -xzvf kafka_2.13-3.6.1.tgz
+tar -xzvf kafka_2.12-3.6.2.tgz
 ```
 
 
 Extract the Kafka archive file 
 
 ```
-mv kafka_2.13-3.6.1.tgz /etc/kafka
+mv kafka_2.12-3.6.2.tgz /etc/kafka
 
 ```
 
@@ -51,7 +51,7 @@ On each server KFK1, KFK2 , KFK3 download Kafka and Zokeeper to the tmp director
 
 ```
 cd /tmp
-wget https://downloads.apache.org/kafka/3.6.1/kafka_2.13-3.6.1.tgz
+wget https://downloads.apache.org/kafka/3.6.2/kafka_2.12-3.6.2.tgz
 
 ```
 
@@ -59,7 +59,7 @@ On each server extract the Kafka archive file
 
 ```
 
-tar -xzvf kafka_2.13-3.6.1.tgz
+tar -xzvf kafka_2.12-3.6.2.tgz
 
 ```
 
@@ -68,7 +68,7 @@ tar -xzvf kafka_2.13-3.6.1.tgz
 
 
 ```
-mv kafka_2.13-3.6.1.tgz /etc/kafka
+mv kafka_2.12-3.6.2.tgz /etc/kafka
 
 mkdir -p /var/lib/zookeeper/
 ```
