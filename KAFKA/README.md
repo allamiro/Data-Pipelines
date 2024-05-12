@@ -25,7 +25,7 @@ tar -xzvf kafka_2.12-3.6.2.tgz
 Extract the Kafka archive file 
 
 ```
-mv kafka_2.12-3.6.2.tgz /etc/kafka
+mv kafka_2.12-3.6.2 /etc/kafka
 
 ```
 
@@ -68,7 +68,7 @@ tar -xzvf kafka_2.12-3.6.2.tgz
 
 
 ```
-mv kafka_2.12-3.6.2.tgz /etc/kafka
+mv kafka_2.12-3.6.2 /etc/kafka
 
 mkdir -p /var/lib/zookeeper/
 ```
