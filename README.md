@@ -13,15 +13,17 @@ Data pipeline architecture best practices refer to the recommended principles an
 * Document and test: Document the pipeline architecture, code, and dependencies, and ensure that the pipeline is thoroughly tested and validated before it is put into production.
 
 ## Diagram 
-    +--------------+      +-------------------+      +-------------------+      +-----------------+      +--------------------+      +----------------+      +--------------------+
-    | Data Sources | ---> |  Data Collection  | ---> |   Data Ingestion  | ---> | Data Processing  | ---> |    Data Storage    | ---> | Data Analysis  | ---> | Data Visualization |
-    +--------------+      +-------------------+      +-------------------+      +-----------------+      +--------------------+      +----------------+      +--------------------+
-           |                     |                          |                          |                         |                       |                        |
-           |                     |                          |                          |                         |                       |                        |
-           v                     v                          v                          v                         v                       v                        v
-    [Files, APIs,       [Elastic Agent, ArcSight Agent, other    [Kafka, RabbitMQ,  [Spark, Hadoop, etc.] [NoSQL, Hadoop, Elasticsearch] [R, Python, SQL, ML] [Tableau, PowerBI,
-     Databases,          collection tools, etc.]                  Logstash, etc.]                                                                             , Kibana, etc.]
-     IoT, etc.]      
+
++--------------+      +-------------------+      +------------------+      +-----------------+      +--------------------+      +----------------+      +--------------------+
+| Data Sources | ---> | Collection        | ---> | Ingestion        | ---> | Streaming       | ---> | Processing         | ---> | Storage        | ---> | Visualization       |
++--------------+      +-------------------+      +------------------+      +-----------------+      +--------------------+      +----------------+      +--------------------+
+       |                     |                           |                            |                        |                        |                       |
+       |                     |                           |                            |                        |                        |                       |
+       v                     v                           v                            v                        v                        v                       v
+[Files, APIs,       [Elastic Agent, ArcSight,     [Logstash]          [Kafka, RabbitMQ, etc.]  [Spark, Hadoop, etc.]       [NoSQL, Elasticsearch, SQL]     [PowerBI, Kibana, etc.]
+ Databases,          Fluentd, td-agent, etc.]                                                                                                              Machine Learning, Python]
+ IoT, apps, etc.]
+
 
 ### Data Pipeline Phases
 - Data Sources: Files, APIs, Databases, Network Devices, IOT etc
