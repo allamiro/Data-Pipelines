@@ -13,7 +13,7 @@ Data pipeline architecture best practices refer to the recommended principles an
 * Document and test: Document the pipeline architecture, code, and dependencies, and ensure that the pipeline is thoroughly tested and validated before it is put into production.
 
 ## Diagram 
-
+```
 +--------------+      +-------------------+      +------------------+      +-----------------+      +--------------------+      +----------------+      +--------------------+
 | Data Sources | ---> | Collection        | ---> | Ingestion        | ---> | Streaming       | ---> | Processing         | ---> | Storage        | ---> | Visualization       |
 +--------------+      +-------------------+      +------------------+      +-----------------+      +--------------------+      +----------------+      +--------------------+
@@ -23,7 +23,7 @@ Data pipeline architecture best practices refer to the recommended principles an
 [Files, APIs,       [Elastic Agent, ArcSight,     [Logstash]          [Kafka, RabbitMQ, etc.]  [Spark, Hadoop, etc.]       [NoSQL, Elasticsearch, SQL]     [PowerBI, Kibana, etc.]
  Databases,          Fluentd, td-agent, etc.]                                                                                                              Machine Learning, Python]
  IoT, apps, etc.]
-
+```
 
 ### Data Pipeline Phases
 - Data Sources: Files, APIs, Databases, Network Devices, IOT etc
