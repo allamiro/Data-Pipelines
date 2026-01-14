@@ -1,0 +1,30 @@
+# Managed by Ansible - Data Pipeline Builder
+# Tenant: {{ item.name }} pipeline
+
+input {
+  beats {
+    port => {{ item.port | default(logstash_beats_port + loop.index0) }}
+    tags => ["{{ item.name }}"]
+  }
+}
+
+filter {
+  mutate {
+    add_field => { "tenant" => "{{ item.name }}" }
+  }
+}
+
+output {
+{% if pipeline.stages.streaming.enabled | default(false) %}
+  kafka {
+    bootstrap_servers => "{{ wiring.streaming.kafka_bootstrap }}"
+    topic_id => "{{ item.topic_prefix | default(item.name) }}.raw"
+    codec => json
+  }
+{% else %}
+  elasticsearch {
+    hosts => {{ wiring.storage.elasticsearch_hosts | to_json }}
+    index => "{{ item.index_prefix | default(item.name) }}-%{+YYYY.MM.dd}"
+  }
+{% endif %}
+}

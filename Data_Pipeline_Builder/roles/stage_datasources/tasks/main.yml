@@ -1,0 +1,9 @@
+---
+# Stage: DataSources - Configure log forwarding agents
+
+- name: Include tool-specific tasks
+  include_tasks: "{{ pipeline.stages.datasources.tool }}.yml"
+
+- name: Open firewall ports (if managed)
+  include_tasks: firewall.yml
+  when: manage_firewall | default(false)

@@ -1,0 +1,133 @@
+---
+# Profile 7: All-in-One Single Host (Developer Laptop)
+# All services on one host for quick dev/testing
+#
+# ASCII Diagram:
+# ┌─────────────────────────────────────────────────────────────────────────────┐
+# │                    ALL-IN-ONE DEVELOPMENT SETUP                             │
+# │                       pipeline1.local.domain                                │
+# ├─────────────────────────────────────────────────────────────────────────────┤
+# │                                                                             │
+# │  ┌───────────────────────────────────────────────────────────────┐         │
+# │  │                      SINGLE HOST                               │         │
+# │  │  ┌─────────────────────────────────────────────────────────┐  │         │
+# │  │  │  DataSources (simulated)                                 │  │         │
+# │  │  │  - /var/log/test/*.log (file inputs)                    │  │         │
+# │  │  └─────────────────────────────────────────────────────────┘  │         │
+# │  │                          │                                    │         │
+# │  │                          ▼                                    │         │
+# │  │  ┌─────────────────────────────────────────────────────────┐  │         │
+# │  │  │  Fluentd (localhost:24224)                               │  │         │
+# │  │  │  - File tail input                                       │  │         │
+# │  │  │  - Forward to localhost:5044                             │  │         │
+# │  │  └─────────────────────────────────────────────────────────┘  │         │
+# │  │                          │                                    │         │
+# │  │                          ▼                                    │         │
+# │  │  ┌─────────────────────────────────────────────────────────┐  │         │
+# │  │  │  Logstash (localhost:5044)                               │  │         │
+# │  │  │  - Beats input                                           │  │         │
+# │  │  │  - Output to localhost:9200                              │  │         │
+# │  │  └─────────────────────────────────────────────────────────┘  │         │
+# │  │                          │                                    │         │
+# │  │                          ▼                                    │         │
+# │  │  ┌─────────────────────────────────────────────────────────┐  │         │
+# │  │  │  [Optional] RabbitMQ (localhost:5672)                    │  │         │
+# │  │  │  - Single node, no clustering                            │  │         │
+# │  │  └─────────────────────────────────────────────────────────┘  │         │
+# │  │                          │                                    │         │
+# │  │                          ▼                                    │         │
+# │  │  ┌─────────────────────────────────────────────────────────┐  │         │
+# │  │  │  Elasticsearch (localhost:9200)                          │  │         │
+# │  │  │  - Single node, discovery.type=single-node               │  │         │
+# │  │  │  - Heap: 512m                                            │  │         │
+# │  │  └─────────────────────────────────────────────────────────┘  │         │
+# │  │                          │                                    │         │
+# │  │                          ▼                                    │         │
+# │  │  ┌─────────────────────────────────────────────────────────┐  │         │
+# │  │  │  Kibana (localhost:5601)                                 │  │         │
+# │  │  │  - Access: http://localhost:5601                         │  │         │
+# │  │  └─────────────────────────────────────────────────────────┘  │         │
+# │  └───────────────────────────────────────────────────────────────┘         │
+# └─────────────────────────────────────────────────────────────────────────────┘
+#
+# Note: Using systemd units (not Docker) because:
+#   - Simpler debugging for development
+#   - Direct access to logs and configs
+#   - No container overhead
+#   - Matches production deployment pattern
+
+name: all_in_one
+description: "All-in-one single host for development and testing"
+version: "1.0.0"
+
+multi_tenant: false
+
+# Single host mode
+single_host: true
+target_host: "pipeline1.local.domain"
+
+stages:
+  datasources:
+    enabled: true
+    tool: file  # Simulated file inputs
+    log_paths:
+      - /var/log/test/app.log
+      - /var/log/test/system.log
+
+  collection:
+    enabled: true
+    tool: fluentd
+    port: 24224
+    bind: "127.0.0.1"
+
+  ingestion:
+    enabled: true
+    tool: logstash
+    port: 5044
+    heap_size: "256m"
+
+  streaming:
+    enabled: false  # Optional, set to true to include RabbitMQ
+    tool: rabbitmq
+    cluster_enabled: false
+    amqp_port: 5672
+
+  processing:
+    enabled: false
+    tool: null
+
+  storage:
+    enabled: true
+    tool: elasticsearch
+    http_port: 9200
+    single_node: true
+    heap_size: "512m"
+
+  visualization:
+    enabled: true
+    tool: kibana
+    port: 5601
+
+# Resource limits for development
+resources:
+  elasticsearch_heap: "512m"
+  logstash_heap: "256m"
+  total_memory_limit: "2g"
+
+# Validation endpoints (for post-deploy check)
+validation:
+  endpoints:
+    - name: fluentd
+      url: "http://localhost:24224"
+      type: tcp
+    - name: logstash
+      url: "http://localhost:5044"
+      type: tcp
+    - name: elasticsearch
+      url: "http://localhost:9200/_cluster/health"
+      type: http
+      expected_status: 200
+    - name: kibana
+      url: "http://localhost:5601/api/status"
+      type: http
+      expected_status: 200

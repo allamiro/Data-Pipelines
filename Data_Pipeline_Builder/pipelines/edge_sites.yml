@@ -1,0 +1,122 @@
+---
+# Profile 5: Edge Sites + Central Ingestion Pipeline
+# Per-site collectors → VIP → Central HA Ingest → Storage → Viz
+#
+# ASCII Diagram:
+# ┌─────────────────────────────────────────────────────────────────────────────┐
+# │                    EDGE SITES + CENTRAL INGESTION                           │
+# ├─────────────────────────────────────────────────────────────────────────────┤
+# │                                                                             │
+# │  ┌───────────────────────────────┐  ┌───────────────────────────────┐      │
+# │  │           SITE 1              │  │           SITE 2              │      │
+# │  │  ┌───────────────────────┐    │  │  ┌───────────────────────┐    │      │
+# │  │  │ sources (5 nodes)     │    │  │  │ sources (5 nodes)     │    │      │
+# │  │  │ datasource_site1      │    │  │  │ datasource_site2      │    │      │
+# │  │  └───────────┬───────────┘    │  │  └───────────┬───────────┘    │      │
+# │  │              ▼                │  │              ▼                │      │
+# │  │  ┌───────────────────────┐    │  │  ┌───────────────────────┐    │      │
+# │  │  │  collector_site1      │    │  │  │  collector_site2      │    │      │
+# │  │  │  fluentd :24224       │    │  │  │  fluentd :24224       │    │      │
+# │  │  └───────────┬───────────┘    │  │  └───────────┬───────────┘    │      │
+# │  └──────────────┼────────────────┘  └──────────────┼────────────────┘      │
+# │                 │                                  │                        │
+# │                 └────────────┬─────────────────────┘                        │
+# │                              │ (ship to VIP only)                           │
+# │                              ▼                                              │
+# │  ┌───────────────────────────────────────────────────────────────┐         │
+# │  │                      CENTRAL DATACENTER                        │         │
+# │  │  ┌─────────────────────────────────────────────────────────┐  │         │
+# │  │  │          Keepalived VIP: 10.20.0.100:5044               │  │         │
+# │  │  │  ┌─────────────────┐      ┌─────────────────┐           │  │         │
+# │  │  │  │   ingestor1     │◄────►│   ingestor2     │           │  │         │
+# │  │  │  │   logstash      │      │   logstash      │           │  │         │
+# │  │  │  │   (MASTER)      │      │   (BACKUP)      │           │  │         │
+# │  │  │  └─────────────────┘      └─────────────────┘           │  │         │
+# │  │  └─────────────────────────────────────────────────────────┘  │         │
+# │  │                              │                                 │         │
+# │  │                              ▼                                 │         │
+# │  │  ┌─────────────────────────────────────────────────────────┐  │         │
+# │  │  │       Elasticsearch Cluster (elastic1, elastic2)        │  │         │
+# │  │  └─────────────────────────────────────────────────────────┘  │         │
+# │  │                              │                                 │         │
+# │  │                              ▼                                 │         │
+# │  │  ┌─────────────────────────────────────────────────────────┐  │         │
+# │  │  │                    kibana1 (Kibana)                      │  │         │
+# │  │  └─────────────────────────────────────────────────────────┘  │         │
+# │  └───────────────────────────────────────────────────────────────┘         │
+# └─────────────────────────────────────────────────────────────────────────────┘
+
+name: edge_sites
+description: "Edge collection with central HA ingestion via VIP"
+version: "1.0.0"
+
+multi_tenant: false
+
+# Edge site definitions
+sites:
+  - name: site1
+    sources_group: datasource_site1
+    collector_group: collector_site1
+    collector_port: 24224
+
+  - name: site2
+    sources_group: datasource_site2
+    collector_group: collector_site2
+    collector_port: 24224
+
+# Central HA configuration
+central:
+  vip: "10.20.0.100"
+  vip_port: 5044
+  vip_interface: eth0
+  keepalived:
+    auth_pass: "changeme"
+    virtual_router_id: 51
+
+stages:
+  datasources:
+    enabled: true
+    tool: rsyslog
+
+  collection:
+    enabled: true
+    tool: fluentd
+    port: 24224
+
+  ingestion:
+    enabled: true
+    tool: logstash
+    port: 5044
+    vip: "10.20.0.100"  # Collectors ship to VIP only
+    ha_enabled: true
+
+  streaming:
+    enabled: false
+    tool: null
+
+  processing:
+    enabled: false
+    tool: null
+
+  storage:
+    enabled: true
+    tool: elasticsearch
+    http_port: 9200
+    cluster_enabled: true
+
+  visualization:
+    enabled: true
+    tool: kibana
+    port: 5601
+
+# Firewall toggle
+firewall:
+  enabled: false
+  backend: nftables  # nftables or ufw
+  rules:
+    - name: "Allow fluentd from sources"
+      port: 24224
+      proto: tcp
+    - name: "Allow logstash VIP"
+      port: 5044
+      proto: tcp

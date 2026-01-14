@@ -1,0 +1,4 @@
+---
+# RabbitMQ node-specific configuration
+rabbitmq_nodename: "rabbit@streamer1"
+rabbitmq_is_primary: true

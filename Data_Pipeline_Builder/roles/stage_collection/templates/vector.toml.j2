@@ -1,0 +1,30 @@
+# Managed by Ansible - Data Pipeline Builder
+# Vector configuration for {{ inventory_hostname }}
+
+[sources.tcp_input]
+type = "socket"
+address = "{{ fluentd_listen_bind }}:{{ fluentd_listen_port }}"
+mode = "tcp"
+
+[transforms.parse_json]
+type = "remap"
+inputs = ["tcp_input"]
+source = '''
+. = parse_json!(.message)
+'''
+
+[sinks.logstash]
+type = "socket"
+inputs = ["parse_json"]
+address = "{{ wiring.ingestion.host }}:{{ wiring.ingestion.port }}"
+mode = "tcp"
+encoding.codec = "json"
+
+{% if pipeline.stages.streaming.enabled | default(false) and pipeline.stages.streaming.tool == 'kafka' %}
+[sinks.kafka]
+type = "kafka"
+inputs = ["parse_json"]
+bootstrap_servers = "{{ wiring.streaming.kafka_bootstrap }}"
+topic = "{{ pipeline.stages.streaming.topics[0].name | default('logs-raw') }}"
+encoding.codec = "json"
+{% endif %}

@@ -1,0 +1,63 @@
+# Data Pipeline Builder - Development Inventory
+# Inventory groups by stage
+
+[datasources]
+client1.local.domain ansible_host=192.168.1.10
+client2.local.domain ansible_host=192.168.1.11
+
+[datacollection]
+collector1.local.domain ansible_host=192.168.1.20
+
+[dataingestion]
+ingestor1.local.domain ansible_host=192.168.1.30
+
+[datastreaming]
+streamer1.local.domain ansible_host=192.168.1.40
+streamer2.local.domain ansible_host=192.168.1.41
+streamer3.local.domain ansible_host=192.168.1.42
+
+[dataprocessing]
+processor1.local.domain ansible_host=192.168.1.50
+
+[datastorage]
+storage1.local.domain ansible_host=192.168.1.60
+storage2.local.domain ansible_host=192.168.1.61
+
+[datavisualization]
+visualizer1.local.domain ansible_host=192.168.1.70
+visualizer2.local.domain ansible_host=192.168.1.71
+
+# Functional groups for tool-specific targeting
+[fluentd:children]
+datacollection
+
+[logstash:children]
+dataingestion
+
+[rabbitmq:children]
+datastreaming
+
+[kafka:children]
+datastreaming
+
+[elasticsearch:children]
+datastorage
+
+[kibana:children]
+datavisualization
+
+# All pipeline hosts
+[pipeline:children]
+datasources
+datacollection
+dataingestion
+datastreaming
+dataprocessing
+datastorage
+datavisualization
+
+# Connection defaults
+[all:vars]
+ansible_user=ansible
+ansible_ssh_port=22
+ansible_python_interpreter=/usr/bin/python3

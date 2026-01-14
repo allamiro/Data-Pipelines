@@ -1,0 +1,15 @@
+---
+# Firewall rules for ingestion
+
+- name: Allow inbound on Logstash beats port (nftables)
+  command: >
+    nft add rule inet filter input tcp dport {{ logstash_beats_port }} accept
+  when: firewall_backend == 'nftables'
+  changed_when: false
+
+- name: Allow inbound on Logstash beats port (ufw)
+  ufw:
+    rule: allow
+    port: "{{ logstash_beats_port }}"
+    proto: tcp
+  when: firewall_backend == 'ufw'

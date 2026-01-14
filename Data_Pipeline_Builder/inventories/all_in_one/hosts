@@ -1,0 +1,26 @@
+# All-in-One single host inventory
+# Profile: pipelines/all_in_one.yml
+
+[datasources]
+pipeline1.local.domain ansible_host=127.0.0.1 ansible_connection=local
+
+[datacollection]
+pipeline1.local.domain ansible_host=127.0.0.1 ansible_connection=local
+
+[dataingestion]
+pipeline1.local.domain ansible_host=127.0.0.1 ansible_connection=local
+
+[datastreaming]
+pipeline1.local.domain ansible_host=127.0.0.1 ansible_connection=local
+
+[datastorage]
+pipeline1.local.domain ansible_host=127.0.0.1 ansible_connection=local
+
+[datavisualization]
+pipeline1.local.domain ansible_host=127.0.0.1 ansible_connection=local
+
+[dataprocessing]
+
+[all:vars]
+ansible_user={{ lookup('env', 'USER') }}
+ansible_python_interpreter=/usr/bin/python3

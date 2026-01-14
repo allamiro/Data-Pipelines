@@ -1,0 +1,17 @@
+---
+# Firewall rules for datasources (outbound to collector)
+
+- name: Allow outbound to collector (nftables)
+  command: >
+    nft add rule inet filter output ip daddr {{ wiring.collector.host }} tcp dport {{ wiring.collector.port }} accept
+  when: firewall_backend == 'nftables'
+  changed_when: false
+
+- name: Allow outbound to collector (ufw)
+  ufw:
+    rule: allow
+    direction: out
+    to_ip: "{{ wiring.collector.host }}"
+    to_port: "{{ wiring.collector.port }}"
+    proto: tcp
+  when: firewall_backend == 'ufw'

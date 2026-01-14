@@ -1,0 +1,48 @@
+---
+# Vector installation and configuration (alternative to fluentd)
+
+- name: Install Vector (script install)
+  shell: |
+    curl --proto '=https' --tlsv1.2 -sSf https://sh.vector.dev | bash -s -- -y
+  args:
+    creates: /usr/bin/vector
+  when: not offline_mode
+
+- name: Create Vector config directory
+  file:
+    path: /etc/vector
+    state: directory
+    mode: '0755'
+
+- name: Configure Vector
+  template:
+    src: vector.toml.j2
+    dest: /etc/vector/vector.toml
+    mode: '0644'
+  notify: restart vector
+
+- name: Create Vector systemd unit
+  copy:
+    content: |
+      [Unit]
+      Description=Vector
+      After=network.target
+
+      [Service]
+      ExecStart=/usr/bin/vector --config /etc/vector/vector.toml
+      Restart=always
+      User=root
+
+      [Install]
+      WantedBy=multi-user.target
+    dest: /etc/systemd/system/vector.service
+    mode: '0644'
+  notify:
+    - reload systemd
+    - restart vector
+
+- name: Ensure Vector is running
+  service:
+    name: vector
+    state: started
+    enabled: true

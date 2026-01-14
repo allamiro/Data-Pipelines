@@ -1,0 +1,57 @@
+---
+# Post-deployment validation tasks
+
+- name: Validate collector service reachable
+  wait_for:
+    host: "{{ wiring.collector.host }}"
+    port: "{{ wiring.collector.port }}"
+    timeout: 30
+  when:
+    - pipeline.stages.collection.enabled | default(false)
+    - wiring.collector.host | length > 0
+  ignore_errors: true
+  register: collector_check
+
+- name: Validate ingestion service reachable
+  wait_for:
+    host: "{{ wiring.ingestion.host }}"
+    port: "{{ wiring.ingestion.port }}"
+    timeout: 30
+  when:
+    - pipeline.stages.ingestion.enabled | default(false)
+    - wiring.ingestion.host | length > 0
+  ignore_errors: true
+  register: ingestion_check
+
+- name: Validate storage service reachable (Elasticsearch)
+  uri:
+    url: "http://{{ wiring.storage.elasticsearch_host }}:{{ wiring.storage.elasticsearch_port }}/_cluster/health"
+    method: GET
+    return_content: true
+  when:
+    - pipeline.stages.storage.enabled | default(false)
+    - pipeline.stages.storage.tool == 'elasticsearch'
+    - wiring.storage.elasticsearch_host | length > 0
+  ignore_errors: true
+  register: es_health
+
+- name: Validate visualization service reachable (Kibana)
+  uri:
+    url: "http://{{ wiring.visualization.kibana_host }}:{{ wiring.visualization.kibana_port }}/api/status"
+    method: GET
+    return_content: true
+  when:
+    - pipeline.stages.visualization.enabled | default(false)
+    - pipeline.stages.visualization.tool == 'kibana'
+    - wiring.visualization.kibana_host | length > 0
+  ignore_errors: true
+  register: kibana_health
+
+- name: Display deployment status
+  debug:
+    msg: |
+      === Deployment Status ===
+      Collector: {{ 'OK' if (collector_check is not failed) else 'FAILED' }}
+      Ingestion: {{ 'OK' if (ingestion_check is not failed) else 'FAILED' }}
+      Storage: {{ 'OK' if (es_health is not failed) else 'FAILED' }}
+      Visualization: {{ 'OK' if (kibana_health is not failed) else 'FAILED' }}

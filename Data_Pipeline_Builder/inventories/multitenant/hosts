@@ -1,0 +1,42 @@
+# Multi-tenant SOC inventory
+# Profile: pipelines/multitenant.yml
+
+# Tenant A sources
+[datasource_clientA]
+clientA-src1.local.domain ansible_host=192.168.10.1
+clientA-src2.local.domain ansible_host=192.168.10.2
+clientA-src3.local.domain ansible_host=192.168.10.3
+
+# Tenant B sources
+[datasource_clientB]
+clientB-src1.local.domain ansible_host=192.168.20.1
+clientB-src2.local.domain ansible_host=192.168.20.2
+
+# Combined datasources group
+[datasources:children]
+datasource_clientA
+datasource_clientB
+
+[datacollection]
+collector1.local.domain ansible_host=192.168.1.20
+
+[dataingestion]
+ingestor1.local.domain ansible_host=192.168.1.30
+
+[datastreaming]
+kafka1.local.domain ansible_host=192.168.1.40
+kafka2.local.domain ansible_host=192.168.1.41
+kafka3.local.domain ansible_host=192.168.1.42
+
+[datastorage]
+elastic1.local.domain ansible_host=192.168.1.60
+elastic2.local.domain ansible_host=192.168.1.61
+
+[datavisualization]
+kibana1.local.domain ansible_host=192.168.1.70
+
+[dataprocessing]
+
+[all:vars]
+ansible_user=ansible
+ansible_python_interpreter=/usr/bin/python3

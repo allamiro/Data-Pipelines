@@ -1,0 +1,34 @@
+# Managed by Ansible - Data Pipeline Builder
+# Elasticsearch configuration for {{ inventory_hostname }}
+
+cluster.name: {{ elasticsearch_cluster_name }}
+node.name: {{ inventory_hostname }}
+
+path.data: {{ elasticsearch_data_path }}
+path.logs: {{ elasticsearch_log_path }}
+
+network.host: {{ ansible_host }}
+http.port: {{ elasticsearch_http_port }}
+transport.port: {{ elasticsearch_transport_port }}
+
+# Cluster discovery
+discovery.seed_hosts:
+{% for host in groups['datastorage'] %}
+  - {{ hostvars[host]['ansible_host'] }}:{{ elasticsearch_transport_port }}
+{% endfor %}
+
+cluster.initial_master_nodes:
+{% for host in groups['datastorage'] %}
+  - {{ host }}
+{% endfor %}
+
+# Security (disabled by default, enable with TLS)
+xpack.security.enabled: {{ tls_enabled | lower }}
+{% if tls_enabled %}
+xpack.security.transport.ssl.enabled: true
+xpack.security.transport.ssl.verification_mode: certificate
+xpack.security.transport.ssl.keystore.path: {{ tls_key_path }}/elasticsearch.p12
+xpack.security.transport.ssl.truststore.path: {{ tls_cert_path }}/elasticsearch.p12
+xpack.security.http.ssl.enabled: true
+xpack.security.http.ssl.keystore.path: {{ tls_key_path }}/elasticsearch.p12
+{% endif %}

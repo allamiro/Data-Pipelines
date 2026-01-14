@@ -1,0 +1,23 @@
+# Managed by Ansible - Data Pipeline Builder
+apiVersion: 1
+
+datasources:
+{% if pipeline.stages.storage.tool == 'clickhouse' %}
+  - name: ClickHouse
+    type: grafana-clickhouse-datasource
+    access: proxy
+    url: http://{{ wiring.storage.clickhouse_host }}:{{ wiring.storage.clickhouse_http_port }}
+    isDefault: true
+    editable: false
+{% elif pipeline.stages.storage.tool == 'elasticsearch' %}
+  - name: Elasticsearch
+    type: elasticsearch
+    access: proxy
+    url: {{ wiring.storage.elasticsearch_hosts[0] }}
+    database: "logs-*"
+    isDefault: true
+    editable: false
+    jsonData:
+      timeField: "@timestamp"
+      esVersion: "8.0.0"
+{% endif %}

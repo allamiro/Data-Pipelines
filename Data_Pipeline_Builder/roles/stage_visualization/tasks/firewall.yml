@@ -1,0 +1,18 @@
+---
+# Firewall rules for visualization
+
+- name: Allow Kibana port (nftables)
+  command: >
+    nft add rule inet filter input tcp dport {{ kibana_port }} accept
+  when:
+    - firewall_backend == 'nftables'
+    - pipeline.stages.visualization.tool == 'kibana'
+  changed_when: false
+
+- name: Allow Grafana port (nftables)
+  command: >
+    nft add rule inet filter input tcp dport {{ grafana_port }} accept
+  when:
+    - firewall_backend == 'nftables'
+    - pipeline.stages.visualization.tool == 'grafana'
+  changed_when: false

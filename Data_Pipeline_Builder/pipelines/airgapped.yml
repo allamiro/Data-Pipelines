@@ -1,0 +1,132 @@
+---
+# Profile 6: Air-gapped / Offline Installation Pipeline
+# All packages staged on local repo host
+#
+# ASCII Diagram:
+# ┌─────────────────────────────────────────────────────────────────────────────┐
+# │                       AIR-GAPPED DEPLOYMENT                                 │
+# ├─────────────────────────────────────────────────────────────────────────────┤
+# │                                                                             │
+# │  ┌───────────────────────────────────────────────────────────────┐         │
+# │  │                    STAGING HOST (repo1)                        │         │
+# │  │  ┌─────────────────────────────────────────────────────────┐  │         │
+# │  │  │  Local Package Repository                                │  │         │
+# │  │  │  - RPM repo: /var/www/html/repos/rhel/                   │  │         │
+# │  │  │  - DEB repo: /var/www/html/repos/debian/                 │  │         │
+# │  │  │  - Container images: /var/www/html/images/               │  │         │
+# │  │  └─────────────────────────────────────────────────────────┘  │         │
+# │  │  ┌─────────────────────────────────────────────────────────┐  │         │
+# │  │  │  Packages:                                               │  │         │
+# │  │  │  - td-agent (fluentd)                                    │  │         │
+# │  │  │  - logstash                                              │  │         │
+# │  │  │  - rabbitmq-server / kafka                               │  │         │
+# │  │  │  - elasticsearch                                         │  │         │
+# │  │  │  - kibana                                                │  │         │
+# │  │  │  - java-11-openjdk                                       │  │         │
+# │  │  └─────────────────────────────────────────────────────────┘  │         │
+# │  └───────────────────────────────────────────────────────────────┘         │
+# │                              │                                              │
+# │                              ▼ (install from local repo)                    │
+# │  ┌───────────────────────────────────────────────────────────────┐         │
+# │  │                    TARGET INFRASTRUCTURE                       │         │
+# │  │                                                                │         │
+# │  │  datasources → collector → ingestor → storage → visualization │         │
+# │  │  (same topology as distributed_es profile)                    │         │
+# │  │                                                                │         │
+# │  │  All nodes configured with:                                   │         │
+# │  │  - Local repo baseurl                                          │         │
+# │  │  - No internet access required                                │         │
+# │  └───────────────────────────────────────────────────────────────┘         │
+# └─────────────────────────────────────────────────────────────────────────────┘
+
+name: airgapped
+description: "Air-gapped deployment with local package repository"
+version: "1.0.0"
+
+multi_tenant: false
+
+# Offline mode settings
+offline:
+  enabled: true
+  repo_host: "repo1.local.domain"
+  package_repo:
+    rhel:
+      baseurl: "http://repo1.local.domain/repos/rhel/"
+      gpgcheck: false
+    debian:
+      baseurl: "http://repo1.local.domain/repos/debian/"
+      gpgcheck: false
+  registry_mirror: "repo1.local.domain:5000"
+
+stages:
+  datasources:
+    enabled: true
+    tool: rsyslog
+
+  collection:
+    enabled: true
+    tool: fluentd
+    port: 24224
+
+  ingestion:
+    enabled: true
+    tool: logstash
+    port: 5044
+
+  streaming:
+    enabled: true
+    tool: rabbitmq
+    cluster_enabled: true
+    amqp_port: 5672
+
+  processing:
+    enabled: false
+    tool: null
+
+  storage:
+    enabled: true
+    tool: elasticsearch
+    http_port: 9200
+    cluster_enabled: true
+
+  visualization:
+    enabled: true
+    tool: kibana
+    port: 5601
+
+# Package manifest (for staging)
+packages:
+  common:
+    - openjdk-11-jre-headless
+    - curl
+    - wget
+  fluentd:
+    - td-agent
+  logstash:
+    - logstash
+  rabbitmq:
+    - rabbitmq-server
+    - erlang
+  kafka:
+    - kafka  # Custom package
+  elasticsearch:
+    - elasticsearch
+  kibana:
+    - kibana
+
+# OS family conditionals
+os_specific:
+  debian:
+    package_manager: apt
+    repo_file: /etc/apt/sources.list.d/pipeline.list
+    repo_template: |
+      deb [trusted=yes] {{ offline.package_repo.debian.baseurl }} stable main
+  redhat:
+    package_manager: yum
+    repo_file: /etc/yum.repos.d/pipeline.repo
+    repo_template: |
+      [pipeline]
+      name=Pipeline Local Repo
+      baseurl={{ offline.package_repo.rhel.baseurl }}
+      enabled=1
+      gpgcheck=0

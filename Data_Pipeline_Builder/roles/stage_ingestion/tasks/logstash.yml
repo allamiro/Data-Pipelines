@@ -1,0 +1,39 @@
+---
+# Logstash installation and configuration
+
+- name: Install Java (required for Logstash)
+  package:
+    name: "{{ 'openjdk-11-jre-headless' if ansible_os_family == 'Debian' else 'java-11-openjdk-headless' }}"
+    state: present
+  when: not offline_mode
+
+- name: Install Logstash
+  package:
+    name: logstash
+    state: present
+  when: not offline_mode
+
+- name: Configure Logstash JVM options
+  template:
+    src: jvm.options.j2
+    dest: /etc/logstash/jvm.options
+    owner: root
+    group: logstash
+    mode: '0644'
+  notify: restart logstash
+
+- name: Configure Logstash pipeline
+  template:
+    src: pipeline.conf.j2
+    dest: /etc/logstash/conf.d/pipeline.conf
+    owner: root
+    group: logstash
+    mode: '0644'
+  notify: restart logstash
+  when: not (pipeline.multi_tenant | default(false))
+
+- name: Ensure Logstash is running
+  service:
+    name: logstash
+    state: started
+    enabled: true

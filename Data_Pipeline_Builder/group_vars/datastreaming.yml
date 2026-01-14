@@ -1,0 +1,18 @@
+---
+# DataStreaming group defaults
+
+streaming_tool: rabbitmq  # rabbitmq, kafka
+
+# RabbitMQ settings
+rabbitmq_amqp_port: 5672
+rabbitmq_mgmt_port: 15672
+rabbitmq_cluster_enabled: true
+rabbitmq_erlang_cookie: "CHANGEME_SECURE_COOKIE"
+
+# Kafka settings
+kafka_port: 9092
+kafka_controller_port: 9093
+kafka_heap_size: "1g"
+kafka_num_partitions: 3
+kafka_replication_factor: 2
+kafka_log_retention_hours: 168

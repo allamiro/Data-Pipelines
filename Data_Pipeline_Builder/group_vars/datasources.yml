@@ -1,0 +1,16 @@
+---
+# DataSources group defaults
+
+datasource_tool: rsyslog  # rsyslog, syslog, filebeat, vector
+
+# Log paths to collect
+log_paths:
+  - /var/log/syslog
+  - /var/log/messages
+
+# Apache logs (if applicable)
+apache_log_paths:
+  - /var/log/apache2/access.log
+  - /var/log/apache2/error.log
+  - /var/log/httpd/access_log
+  - /var/log/httpd/error_log

@@ -1,0 +1,119 @@
+---
+# Profile 3: Kafka + ClickHouse Production Pipeline
+# Sources (10+) → Vector → Logstash → Kafka → ClickHouse → Grafana
+#
+# Note: Vector chosen over Fluentd for:
+#   - Better performance at scale (Rust-based)
+#   - Native Kafka support
+#   - Lower memory footprint for 10+ source nodes
+#   - Schema-aware transformations
+#
+# ASCII Diagram:
+# ┌─────────────────────────────────────────────────────────────────────────────┐
+# │                    KAFKA + CLICKHOUSE PRODUCTION PIPELINE                   │
+# ├─────────────────────────────────────────────────────────────────────────────┤
+# │                                                                             │
+# │  ┌─────────────────────────────────┐                                       │
+# │  │     DataSources (10+ nodes)     │                                       │
+# │  │  client1, client2, ... client10 │                                       │
+# │  └────────────────┬────────────────┘                                       │
+# │                   │                                                         │
+# │                   ▼                                                         │
+# │  ┌──────────────┐     ┌──────────────┐                                     │
+# │  │  collector1  │     │  ingestor1   │                                     │
+# │  │    vector    │────▶│   logstash   │                                     │
+# │  │  TCP/24224   │     │  TCP/5044    │                                     │
+# │  └──────────────┘     └──────┬───────┘                                     │
+# │                              │                                              │
+# │                              ▼                                              │
+# │  ┌─────────────────────────────────────────────────────────────┐           │
+# │  │                    Kafka Cluster (KRaft)                     │           │
+# │  │  ┌───────────┐    ┌───────────┐    ┌───────────┐            │           │
+# │  │  │ streamer1 │    │ streamer2 │    │ streamer3 │            │           │
+# │  │  │  :9092    │────│  :9092    │────│  :9092    │            │           │
+# │  │  └───────────┘    └───────────┘    └───────────┘            │           │
+# │  │                                                              │           │
+# │  │  Topics: logs-raw (p=3, r=2), logs-parsed (p=3, r=2)        │           │
+# │  └─────────────────────────────────────────────────────────────┘           │
+# │                              │                                              │
+# │                              ▼                                              │
+# │  ┌──────────────┐     ┌──────────────┐                                     │
+# │  │   storage1   │     │  visualizer1 │                                     │
+# │  │  ClickHouse  │◀───▶│   Grafana    │                                     │
+# │  │  HTTP:8123   │     │   :3000      │                                     │
+# │  └──────────────┘     └──────────────┘                                     │
+# └─────────────────────────────────────────────────────────────────────────────┘
+
+name: kafka_clickhouse
+description: "Production pipeline with Kafka streaming and ClickHouse storage"
+version: "1.0.0"
+
+multi_tenant: false
+
+stages:
+  datasources:
+    enabled: true
+    tool: vector  # Vector for high-volume sources
+
+  collection:
+    enabled: true
+    tool: vector  # Vector chosen for performance at scale
+    port: 24224
+
+  ingestion:
+    enabled: true
+    tool: logstash
+    port: 5044
+
+  streaming:
+    enabled: true
+    tool: kafka
+    cluster_enabled: true
+    port: 9092
+    controller_port: 9093
+    topics:
+      - name: logs-raw
+        partitions: 3
+        replication: 2
+      - name: logs-parsed
+        partitions: 3
+        replication: 2
+
+  processing:
+    enabled: false
+    tool: null
+
+  storage:
+    enabled: true
+    tool: clickhouse
+    http_port: 8123
+    native_port: 9000
+    database: logs
+    table: events
+
+  visualization:
+    enabled: true
+    tool: grafana
+    port: 3000
+
+# Kafka configuration
+kafka:
+  cluster_id: "pipeline-kafka-cluster"
+  heap_size: "1g"
+  log_retention_hours: 168
+  num_partitions: 3
+  replication_factor: 2
+
+# TLS toggle (affects all services)
+tls:
+  enabled: false
+  # When enabled, requires:
+  # - kafka.keystore.jks / kafka.truststore.jks
+  # - clickhouse TLS certs
+  # - grafana TLS certs
+
+# Schema/versioning patterns
+schema:
+  registry_enabled: false  # Optional: Confluent Schema Registry
+  format: json  # json, avro, protobuf
+  version_field: "_schema_version"

@@ -1,0 +1,76 @@
+---
+# Preflight validation tasks
+
+- name: Validate pipeline profile is defined
+  assert:
+    that:
+      - pipeline is defined
+      - pipeline.name is defined
+    fail_msg: "Pipeline profile must be defined. Use -e 'pipeline_profile=<name>'"
+
+- name: Validate required inventory groups exist
+  assert:
+    that:
+      - "'datasources' in groups or not (pipeline.stages.datasources.enabled | default(false))"
+      - "'datacollection' in groups or not (pipeline.stages.collection.enabled | default(false))"
+      - "'dataingestion' in groups or not (pipeline.stages.ingestion.enabled | default(false))"
+      - "'datastreaming' in groups or not (pipeline.stages.streaming.enabled | default(false))"
+      - "'dataprocessing' in groups or not (pipeline.stages.processing.enabled | default(false))"
+      - "'datastorage' in groups or not (pipeline.stages.storage.enabled | default(false))"
+      - "'datavisualization' in groups or not (pipeline.stages.visualization.enabled | default(false))"
+    fail_msg: "Required inventory groups missing for enabled stages"
+
+- name: Validate storage cluster size (if elasticsearch cluster)
+  assert:
+    that:
+      - groups['datastorage'] | length >= 2
+    fail_msg: "Elasticsearch cluster requires at least 2 nodes"
+  when:
+    - pipeline.stages.storage.enabled | default(false)
+    - pipeline.stages.storage.tool == 'elasticsearch'
+    - pipeline.stages.storage.cluster_enabled | default(false)
+
+- name: Validate streaming cluster size (if RabbitMQ cluster)
+  assert:
+    that:
+      - groups['datastreaming'] | length >= 3
+    fail_msg: "RabbitMQ cluster requires at least 3 nodes"
+  when:
+    - pipeline.stages.streaming.enabled | default(false)
+    - pipeline.stages.streaming.tool == 'rabbitmq'
+    - pipeline.stages.streaming.cluster_enabled | default(false)
+
+- name: Validate streaming cluster size (if Kafka cluster)
+  assert:
+    that:
+      - groups['datastreaming'] | length >= 3
+    fail_msg: "Kafka cluster requires at least 3 nodes"
+  when:
+    - pipeline.stages.streaming.enabled | default(false)
+    - pipeline.stages.streaming.tool == 'kafka'
+    - pipeline.stages.streaming.cluster_enabled | default(false)
+
+- name: Validate tenant names are unique (multi-tenant)
+  assert:
+    that:
+      - pipeline.tenants | map(attribute='name') | list | unique | length == pipeline.tenants | length
+    fail_msg: "Tenant names must be unique"
+  when:
+    - pipeline.multi_tenant | default(false)
+    - pipeline.tenants is defined
+
+- name: Validate tenant groups exist (multi-tenant)
+  assert:
+    that:
+      - item.sources_group in groups
+    fail_msg: "Tenant sources group '{{ item.sources_group }}' not found in inventory"
+  loop: "{{ pipeline.tenants | default([]) }}"
+  when:
+    - pipeline.multi_tenant | default(false)
+
+- name: Display preflight summary
+  debug:
+    msg: |
+      Pipeline: {{ pipeline.name }}
+      Profile: {{ pipeline_profile }}
+      Enabled stages: {{ pipeline.stages | dict2items | selectattr('value.enabled', 'equalto', true) | map(attribute='key') | list | join(', ') }}

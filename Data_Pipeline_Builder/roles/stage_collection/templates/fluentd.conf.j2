@@ -1,0 +1,41 @@
+# Managed by Ansible - Data Pipeline Builder
+# Fluentd configuration for {{ inventory_hostname }}
+
+# Input: TCP from sources
+<source>
+  @type forward
+  port {{ fluentd_listen_port }}
+  bind {{ fluentd_listen_bind }}
+{% if tls_enabled %}
+  <transport tls>
+    cert_path {{ tls_cert_path }}/fluentd.crt
+    private_key_path {{ tls_key_path }}/fluentd.key
+    ca_path {{ tls_ca_path }}
+  </transport>
+{% endif %}
+</source>
+
+# Buffer and output to ingestion (Logstash)
+<match **>
+  @type forward
+  send_timeout 60s
+  recover_wait 10s
+  hard_timeout 60s
+
+{% for endpoint in wiring.ingestion.endpoints %}
+  <server>
+    host {{ endpoint.split(':')[0] }}
+    port {{ endpoint.split(':')[1] }}
+  </server>
+{% endfor %}
+
+  <buffer>
+    @type {{ fluentd_buffer_type }}
+    path {{ fluentd_buffer_path }}/forward
+    chunk_limit_size {{ fluentd_buffer_chunk_limit }}
+    queue_limit_length {{ fluentd_buffer_queue_limit }}
+    flush_interval 5s
+    retry_max_interval 30s
+    retry_forever true
+  </buffer>
+</match>

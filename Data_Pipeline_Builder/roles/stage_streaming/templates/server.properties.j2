@@ -1,0 +1,28 @@
+# Managed by Ansible - Data Pipeline Builder
+# Kafka KRaft configuration for {{ inventory_hostname }}
+
+node.id={{ groups['datastreaming'].index(inventory_hostname) + 1 }}
+process.roles=broker,controller
+
+listeners=PLAINTEXT://:{{ kafka_port }},CONTROLLER://:{{ kafka_controller_port }}
+advertised.listeners=PLAINTEXT://{{ ansible_host }}:{{ kafka_port }}
+controller.listener.names=CONTROLLER
+inter.broker.listener.name=PLAINTEXT
+
+controller.quorum.voters={% for host in groups['datastreaming'] %}{{ loop.index }}@{{ hostvars[host]['ansible_host'] }}:{{ kafka_controller_port }}{% if not loop.last %},{% endif %}{% endfor %}
+
+log.dirs=/var/lib/kafka
+num.partitions={{ kafka_num_partitions }}
+default.replication.factor={{ kafka_replication_factor }}
+offsets.topic.replication.factor={{ [kafka_replication_factor, groups['datastreaming'] | length] | min }}
+transaction.state.log.replication.factor={{ [kafka_replication_factor, groups['datastreaming'] | length] | min }}
+
+log.retention.hours={{ kafka_log_retention_hours }}
+log.segment.bytes=1073741824
+
+{% if tls_enabled %}
+ssl.keystore.location={{ tls_key_path }}/kafka.keystore.jks
+ssl.keystore.password=changeit
+ssl.truststore.location={{ tls_cert_path }}/kafka.truststore.jks
+ssl.truststore.password=changeit
+{% endif %}

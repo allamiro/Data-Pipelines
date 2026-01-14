@@ -1,0 +1,43 @@
+---
+# Global defaults for all hosts
+
+# Pipeline profile (override via -e "pipeline_profile=xxx")
+pipeline_profile: distributed_es
+
+# Global TLS settings
+tls_enabled: false
+tls_cert_path: /etc/pki/tls/certs
+tls_key_path: /etc/pki/tls/private
+tls_ca_path: /etc/pki/tls/certs/ca-bundle.crt
+
+# Default ports by service
+default_ports:
+  fluentd: 24224
+  logstash_beats: 5044
+  logstash_tcp: 5000
+  elasticsearch_http: 9200
+  elasticsearch_transport: 9300
+  kibana: 5601
+  rabbitmq_amqp: 5672
+  rabbitmq_mgmt: 15672
+  kafka: 9092
+  kafka_controller: 9093
+  zookeeper: 2181
+  clickhouse_http: 8123
+  clickhouse_native: 9000
+  grafana: 3000
+
+# Resource limits (can be overridden per profile)
+resource_limits:
+  elasticsearch_heap: "1g"
+  logstash_heap: "512m"
+  kafka_heap: "1g"
+
+# Offline/airgap mode
+offline_mode: false
+package_repo_baseurl: ""
+registry_mirror: ""
+
+# Firewall management
+manage_firewall: false
+firewall_backend: nftables  # nftables or ufw

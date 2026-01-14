@@ -1,0 +1,30 @@
+---
+# Keepalived role for HA VIP management
+
+- name: Install keepalived
+  package:
+    name: keepalived
+    state: present
+
+- name: Configure keepalived
+  template:
+    src: keepalived.conf.j2
+    dest: /etc/keepalived/keepalived.conf
+    owner: root
+    group: root
+    mode: '0644'
+  notify: restart keepalived
+
+- name: Enable IP forwarding
+  sysctl:
+    name: net.ipv4.ip_nonlocal_bind
+    value: '1'
+    sysctl_set: true
+    state: present
+    reload: true
+
+- name: Ensure keepalived is running
+  service:
+    name: keepalived
+    state: started
+    enabled: true

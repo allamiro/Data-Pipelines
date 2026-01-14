@@ -1,0 +1,48 @@
+---
+# Offline repository configuration
+
+- name: Configure local repo (Debian)
+  block:
+    - name: Remove default sources
+      file:
+        path: /etc/apt/sources.list
+        state: absent
+      when: pipeline.offline.enabled | default(false)
+
+    - name: Add local repository
+      copy:
+        content: |
+          deb [trusted=yes] {{ pipeline.offline.package_repo.debian.baseurl }} stable main
+        dest: /etc/apt/sources.list.d/pipeline-local.list
+        mode: '0644'
+
+    - name: Update apt cache
+      apt:
+        update_cache: true
+  when: ansible_os_family == 'Debian'
+
+- name: Configure local repo (RedHat)
+  block:
+    - name: Disable all remote repos
+      command: yum-config-manager --disable \*
+      changed_when: false
+      when: pipeline.offline.enabled | default(false)
+
+    - name: Add local repository
+      yum_repository:
+        name: pipeline-local
+        description: "Pipeline Local Repository"
+        baseurl: "{{ pipeline.offline.package_repo.rhel.baseurl }}"
+        gpgcheck: false
+        enabled: true
+
+    - name: Clean yum cache
+      command: yum clean all
+      changed_when: false
+  when: ansible_os_family == 'RedHat'
+
+- name: Verify repository connectivity
+  command: "{{ 'apt-cache policy' if ansible_os_family == 'Debian' else 'yum repolist' }}"
+  register: repo_check
+  changed_when: false
+  failed_when: repo_check.rc != 0

@@ -1,0 +1,9 @@
+# Managed by Ansible - Data Pipeline Builder
+-Xms{{ logstash_heap_size }}
+-Xmx{{ logstash_heap_size }}
+-XX:+UseG1GC
+-Djava.awt.headless=true
+-Dfile.encoding=UTF-8
+-Djruby.compile.invokedynamic=true
+-XX:+HeapDumpOnOutOfMemoryError
+-Djava.security.egd=file:/dev/urandom

@@ -1,0 +1,13 @@
+---
+# Stage: DataIngestion - Deploy Logstash
+
+- name: Include tool-specific tasks
+  include_tasks: "{{ pipeline.stages.ingestion.tool }}.yml"
+
+- name: Deploy tenant pipelines (multi-tenant mode)
+  include_tasks: tenant_pipelines.yml
+  when: pipeline.multi_tenant | default(false)
+
+- name: Open firewall ports (if managed)
+  include_tasks: firewall.yml
+  when: manage_firewall | default(false)

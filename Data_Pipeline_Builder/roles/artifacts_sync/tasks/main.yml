@@ -1,0 +1,68 @@
+---
+# Artifacts staging for air-gapped deployments
+# Run this on the repo host to stage packages
+
+- name: Create repository directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: '0755'
+  loop:
+    - /var/www/html/repos/rhel
+    - /var/www/html/repos/debian
+    - /var/www/html/images
+
+- name: Install createrepo (RHEL)
+  package:
+    name: createrepo
+    state: present
+  when: ansible_os_family == 'RedHat'
+
+- name: Install dpkg-dev (Debian)
+  package:
+    name: dpkg-dev
+    state: present
+  when: ansible_os_family == 'Debian'
+
+- name: Copy RPM packages
+  copy:
+    src: "{{ item }}"
+    dest: /var/www/html/repos/rhel/
+    mode: '0644'
+  with_fileglob:
+    - "{{ artifacts_source_path | default('/tmp/packages') }}/*.rpm"
+  when: ansible_os_family == 'RedHat'
+
+- name: Create RPM repository metadata
+  command: createrepo /var/www/html/repos/rhel/
+  args:
+    creates: /var/www/html/repos/rhel/repodata/repomd.xml
+  when: ansible_os_family == 'RedHat'
+
+- name: Copy DEB packages
+  copy:
+    src: "{{ item }}"
+    dest: /var/www/html/repos/debian/
+    mode: '0644'
+  with_fileglob:
+    - "{{ artifacts_source_path | default('/tmp/packages') }}/*.deb"
+  when: ansible_os_family == 'Debian'
+
+- name: Create DEB repository index
+  shell: |
+    cd /var/www/html/repos/debian
+    dpkg-scanpackages . /dev/null | gzip -9c > Packages.gz
+  args:
+    creates: /var/www/html/repos/debian/Packages.gz
+  when: ansible_os_family == 'Debian'
+
+- name: Install nginx for serving packages
+  package:
+    name: nginx
+    state: present
+
+- name: Ensure nginx is running
+  service:
+    name: nginx
+    state: started
+    enabled: true

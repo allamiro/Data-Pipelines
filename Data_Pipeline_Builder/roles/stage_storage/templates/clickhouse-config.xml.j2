@@ -1,0 +1,22 @@
+<!-- Managed by Ansible - Data Pipeline Builder -->
+<clickhouse>
+    <http_port>{{ clickhouse_http_port }}</http_port>
+    <tcp_port>{{ clickhouse_native_port }}</tcp_port>
+    <listen_host>::</listen_host>
+    
+    <path>{{ clickhouse_data_path }}/</path>
+    <tmp_path>{{ clickhouse_data_path }}/tmp/</tmp_path>
+    
+    <max_connections>4096</max_connections>
+    <keep_alive_timeout>3</keep_alive_timeout>
+    
+    <max_concurrent_queries>100</max_concurrent_queries>
+    
+    <logger>
+        <level>information</level>
+        <log>/var/log/clickhouse-server/clickhouse-server.log</log>
+        <errorlog>/var/log/clickhouse-server/clickhouse-server.err.log</errorlog>
+        <size>1000M</size>
+        <count>10</count>
+    </logger>
+</clickhouse>

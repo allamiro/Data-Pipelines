@@ -1,0 +1,98 @@
+---
+# Profile 1: Distributed Elasticsearch Pipeline
+# Multi-source → Collector → Logstash → Elasticsearch → Kibana
+#
+# ASCII Diagram:
+# ┌─────────────────────────────────────────────────────────────────────────────┐
+# │                        DISTRIBUTED ES PIPELINE                              │
+# ├─────────────────────────────────────────────────────────────────────────────┤
+# │                                                                             │
+# │  ┌──────────────┐     ┌──────────────┐     ┌──────────────┐                │
+# │  │   client1    │     │  collector1  │     │  ingestor1   │                │
+# │  │   rsyslog    │────▶│   fluentd    │────▶│   logstash   │                │
+# │  │  Apache logs │     │  TCP/24224   │     │  TCP/5044    │                │
+# │  └──────────────┘     └──────────────┘     └──────┬───────┘                │
+# │                              ▲                    │                         │
+# │  ┌──────────────┐            │                    │                         │
+# │  │   client2    │────────────┘                    ▼                         │
+# │  │    syslog    │              ┌─────────────────────────────────┐         │
+# │  │  Cisco logs  │              │       Elasticsearch Cluster      │         │
+# │  └──────────────┘              │  ┌───────────┐  ┌───────────┐   │         │
+# │                                │  │ storage1  │──│ storage2  │   │         │
+# │                                │  │  :9200    │  │  :9200    │   │         │
+# │                                │  └───────────┘  └───────────┘   │         │
+# │                                └─────────────────────────────────┘         │
+# │                                              │                              │
+# │                                              ▼                              │
+# │                                ┌─────────────────────────────────┐         │
+# │                                │         Kibana Cluster          │         │
+# │                                │  ┌───────────┐  ┌───────────┐   │         │
+# │                                │  │visualizer1│  │visualizer2│   │         │
+# │                                │  │  :5601    │  │  :5601    │   │         │
+# │                                │  └───────────┘  └───────────┘   │         │
+# │                                └─────────────────────────────────┘         │
+# └─────────────────────────────────────────────────────────────────────────────┘
+
+name: distributed_es
+description: "Distributed pipeline with Elasticsearch cluster and Kibana"
+version: "1.0.0"
+
+# Multi-tenant mode disabled for this profile
+multi_tenant: false
+
+# Stage definitions
+stages:
+  datasources:
+    enabled: true
+    tool: rsyslog
+    log_types:
+      - syslog
+      - apache
+
+  collection:
+    enabled: true
+    tool: fluentd
+    port: 24224
+    buffer_type: file
+    buffer_size: "8m"
+
+  ingestion:
+    enabled: true
+    tool: logstash
+    port: 5044
+    heap_size: "512m"
+    workers: 2
+
+  streaming:
+    enabled: false
+    tool: null
+
+  processing:
+    enabled: false
+    tool: null
+
+  storage:
+    enabled: true
+    tool: elasticsearch
+    http_port: 9200
+    transport_port: 9300
+    cluster_name: "pipeline-cluster"
+    cluster_enabled: true
+    heap_size: "1g"
+    index_pattern: "logs-%{+YYYY.MM.dd}"
+
+  visualization:
+    enabled: true
+    tool: kibana
+    port: 5601
+
+# TLS configuration
+tls:
+  enabled: false
+  cert_path: /etc/pki/tls/certs
+  key_path: /etc/pki/tls/private
+
+# Resource limits
+resources:
+  elasticsearch_heap: "1g"
+  logstash_heap: "512m"

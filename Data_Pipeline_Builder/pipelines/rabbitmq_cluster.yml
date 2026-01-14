@@ -1,0 +1,100 @@
+---
+# Profile 2: RabbitMQ Cluster Streaming Pipeline
+# Sources → Collector → Logstash → RabbitMQ Cluster
+#
+# ASCII Diagram:
+# ┌─────────────────────────────────────────────────────────────────────────────┐
+# │                       RABBITMQ CLUSTER PIPELINE                             │
+# ├─────────────────────────────────────────────────────────────────────────────┤
+# │                                                                             │
+# │  ┌──────────────┐     ┌──────────────┐     ┌──────────────┐                │
+# │  │   client1    │     │  collector1  │     │  ingestor1   │                │
+# │  │   rsyslog    │────▶│   fluentd    │────▶│   logstash   │                │
+# │  └──────────────┘     │  TCP/24224   │     │  TCP/5044    │                │
+# │                       └──────────────┘     └──────┬───────┘                │
+# │  ┌──────────────┐            ▲                    │                         │
+# │  │   client2    │────────────┘                    ▼                         │
+# │  │    syslog    │              ┌─────────────────────────────────┐         │
+# │  └──────────────┘              │       RabbitMQ Cluster          │         │
+# │                                │  ┌───────────────────────────┐  │         │
+# │                                │  │   streamer1 (primary)     │  │         │
+# │                                │  │   AMQP:5672 MGMT:15672    │  │         │
+# │                                │  └─────────┬─────────────────┘  │         │
+# │                                │            │ cluster            │         │
+# │                                │  ┌─────────┴─────────┐          │         │
+# │                                │  ▼                   ▼          │         │
+# │                                │  ┌───────────┐ ┌───────────┐    │         │
+# │                                │  │ streamer2 │ │ streamer3 │    │         │
+# │                                │  │   :5672   │ │   :5672   │    │         │
+# │                                │  └───────────┘ └───────────┘    │         │
+# │                                └─────────────────────────────────┘         │
+# │                                              │                              │
+# │                                              ▼                              │
+# │                                   [Future: Storage/Viz]                     │
+# └─────────────────────────────────────────────────────────────────────────────┘
+
+name: rabbitmq_cluster
+description: "Streaming pipeline with RabbitMQ cluster (storage/viz disabled)"
+version: "1.0.0"
+
+multi_tenant: false
+
+stages:
+  datasources:
+    enabled: true
+    tool: rsyslog
+
+  collection:
+    enabled: true
+    tool: fluentd
+    port: 24224
+
+  ingestion:
+    enabled: true
+    tool: logstash
+    port: 5044
+
+  streaming:
+    enabled: true
+    tool: rabbitmq
+    cluster_enabled: true
+    amqp_port: 5672
+    mgmt_port: 15672
+    exchange: "logs"
+    exchange_type: "direct"
+    queue: "logs-queue"
+    routing_key: "logs"
+
+  processing:
+    enabled: false
+    tool: null
+
+  storage:
+    enabled: false
+    tool: null
+
+  visualization:
+    enabled: false
+    tool: null
+
+# RabbitMQ cluster settings
+rabbitmq:
+  erlang_cookie: "SUPER_SECRET_ERLANG_COOKIE_CHANGE_ME"
+  cluster_join_order:
+    - streamer1.local.domain
+    - streamer2.local.domain
+    - streamer3.local.domain
+  ha_policy:
+    name: "ha-all"
+    pattern: ".*"
+    definition:
+      ha-mode: "all"
+      ha-sync-mode: "automatic"
+
+# Logstash output to RabbitMQ
+logstash_output:
+  plugin: rabbitmq
+  exchange: "logs"
+  exchange_type: "direct"
+  durable: true
+  persistent: true

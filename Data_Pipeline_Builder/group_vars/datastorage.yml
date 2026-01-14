@@ -1,0 +1,17 @@
+---
+# DataStorage group defaults
+
+storage_tool: elasticsearch  # elasticsearch, clickhouse
+
+# Elasticsearch settings
+elasticsearch_http_port: 9200
+elasticsearch_transport_port: 9300
+elasticsearch_cluster_name: "pipeline-cluster"
+elasticsearch_heap_size: "1g"
+elasticsearch_data_path: /var/lib/elasticsearch
+elasticsearch_log_path: /var/log/elasticsearch
+
+# ClickHouse settings
+clickhouse_http_port: 8123
+clickhouse_native_port: 9000
+clickhouse_data_path: /var/lib/clickhouse

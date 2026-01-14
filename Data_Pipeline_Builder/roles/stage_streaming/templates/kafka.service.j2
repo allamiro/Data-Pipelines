@@ -1,0 +1,16 @@
+[Unit]
+Description=Apache Kafka
+After=network.target
+
+[Service]
+Type=simple
+User=kafka
+Group=kafka
+Environment="KAFKA_HEAP_OPTS=-Xms{{ kafka_heap_size }} -Xmx{{ kafka_heap_size }}"
+ExecStart=/opt/kafka/bin/kafka-server-start.sh /opt/kafka/config/kraft/server.properties
+ExecStop=/opt/kafka/bin/kafka-server-stop.sh
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

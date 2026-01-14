@@ -1,0 +1,9 @@
+---
+# Stage: DataCollection - Deploy collection agents (fluentd/vector)
+
+- name: Include tool-specific tasks
+  include_tasks: "{{ pipeline.stages.collection.tool }}.yml"
+
+- name: Open firewall ports (if managed)
+  include_tasks: firewall.yml
+  when: manage_firewall | default(false)

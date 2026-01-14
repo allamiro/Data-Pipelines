@@ -1,0 +1,9 @@
+# Managed by Ansible - Data Pipeline Builder
+# Multi-tenant pipelines configuration
+
+{% for tenant in pipeline.tenants %}
+- pipeline.id: {{ tenant.name }}
+  path.config: "/etc/logstash/conf.d/{{ tenant.name }}-pipeline.conf"
+  pipeline.workers: {{ logstash_pipeline_workers }}
+  pipeline.batch.size: {{ logstash_pipeline_batch_size }}
+{% endfor %}

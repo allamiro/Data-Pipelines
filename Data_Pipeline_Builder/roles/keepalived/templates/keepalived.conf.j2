@@ -1,0 +1,35 @@
+# Managed by Ansible - Data Pipeline Builder
+# Keepalived configuration for {{ inventory_hostname }}
+
+global_defs {
+    router_id {{ inventory_hostname }}
+}
+
+vrrp_instance VI_1 {
+    state {{ 'MASTER' if inventory_hostname == groups['dataingestion'][0] else 'BACKUP' }}
+    interface {{ pipeline.central.vip_interface | default('eth0') }}
+    virtual_router_id {{ pipeline.central.keepalived.virtual_router_id | default(51) }}
+    priority {{ 100 if inventory_hostname == groups['dataingestion'][0] else 99 - groups['dataingestion'].index(inventory_hostname) }}
+    advert_int 1
+
+    authentication {
+        auth_type PASS
+        auth_pass {{ pipeline.central.keepalived.auth_pass | default('changeme') }}
+    }
+
+    virtual_ipaddress {
+        {{ pipeline.central.vip }}/24
+    }
+
+    track_script {
+        chk_logstash
+    }
+}
+
+vrrp_script chk_logstash {
+    script "/usr/bin/pgrep -x logstash"
+    interval 2
+    weight 2
+    fall 2
+    rise 2
+}

@@ -1,0 +1,18 @@
+# Managed by Ansible - Data Pipeline Builder
+# Forward logs to collector: {{ wiring.collector.host }}:{{ wiring.collector.port }}
+
+# Load TCP output module
+module(load="omfwd")
+
+# Forward all logs to collector
+*.* action(type="omfwd"
+    target="{{ wiring.collector.host }}"
+    port="{{ wiring.collector.port }}"
+    protocol="tcp"
+    action.resumeRetryCount="-1"
+    queue.type="LinkedList"
+    queue.filename="fwdRule1"
+    queue.maxDiskSpace="1g"
+    queue.saveOnShutdown="on"
+    queue.size="10000"
+)

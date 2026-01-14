@@ -1,0 +1,24 @@
+---
+# Firewall rules for storage
+
+- name: Allow Elasticsearch ports (nftables)
+  command: >
+    nft add rule inet filter input tcp dport {{ item }} accept
+  loop:
+    - "{{ elasticsearch_http_port }}"
+    - "{{ elasticsearch_transport_port }}"
+  when:
+    - firewall_backend == 'nftables'
+    - pipeline.stages.storage.tool == 'elasticsearch'
+  changed_when: false
+
+- name: Allow ClickHouse ports (nftables)
+  command: >
+    nft add rule inet filter input tcp dport {{ item }} accept
+  loop:
+    - "{{ clickhouse_http_port }}"
+    - "{{ clickhouse_native_port }}"
+  when:
+    - firewall_backend == 'nftables'
+    - pipeline.stages.storage.tool == 'clickhouse'
+  changed_when: false

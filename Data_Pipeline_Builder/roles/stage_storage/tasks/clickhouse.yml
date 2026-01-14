@@ -1,0 +1,46 @@
+---
+# ClickHouse installation and configuration
+
+- name: Install ClickHouse (Debian)
+  block:
+    - name: Add ClickHouse GPG key
+      apt_key:
+        url: https://packages.clickhouse.com/rpm/lts/repodata/repomd.xml.key
+        state: present
+
+    - name: Add ClickHouse repository
+      apt_repository:
+        repo: "deb https://packages.clickhouse.com/deb stable main"
+        state: present
+
+    - name: Install ClickHouse packages
+      apt:
+        name:
+          - clickhouse-server
+          - clickhouse-client
+        state: present
+        update_cache: true
+  when:
+    - ansible_os_family == 'Debian'
+    - not offline_mode
+
+- name: Configure ClickHouse
+  template:
+    src: clickhouse-config.xml.j2
+    dest: /etc/clickhouse-server/config.d/pipeline.xml
+    owner: clickhouse
+    group: clickhouse
+    mode: '0644'
+  notify: restart clickhouse
+
+- name: Ensure ClickHouse is running
+  service:
+    name: clickhouse-server
+    state: started
+    enabled: true
+
+- name: Create logs database and table
+  command: >
+    clickhouse-client --query "CREATE DATABASE IF NOT EXISTS logs"
+  changed_when: false
+  when: inventory_hostname == groups['datastorage'][0]

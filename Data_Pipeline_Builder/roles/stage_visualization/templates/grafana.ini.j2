@@ -1,0 +1,24 @@
+# Managed by Ansible - Data Pipeline Builder
+# Grafana configuration for {{ inventory_hostname }}
+
+[server]
+http_port = {{ grafana_port }}
+domain = {{ ansible_host }}
+
+[security]
+admin_user = {{ grafana_admin_user }}
+admin_password = {{ grafana_admin_password }}
+
+[users]
+allow_sign_up = false
+
+[auth.anonymous]
+enabled = false
+
+[log]
+mode = file
+level = info
+
+[log.file]
+log_rotate = true
+max_days = 7

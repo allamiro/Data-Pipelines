@@ -1,0 +1,10 @@
+---
+- name: restart kibana
+  service:
+    name: kibana
+    state: restarted
+
+- name: restart grafana
+  service:
+    name: grafana-server
+    state: restarted

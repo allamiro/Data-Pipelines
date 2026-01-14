@@ -1,0 +1,40 @@
+---
+# Fluentd installation and configuration
+
+- name: Install fluentd dependencies
+  package:
+    name:
+      - ruby
+      - ruby-dev
+      - build-essential
+    state: present
+  when: ansible_os_family == 'Debian'
+
+- name: Install td-agent (Fluentd)
+  package:
+    name: td-agent
+    state: present
+  when: not offline_mode
+
+- name: Create fluentd buffer directory
+  file:
+    path: "{{ fluentd_buffer_path }}"
+    state: directory
+    owner: td-agent
+    group: td-agent
+    mode: '0755'
+
+- name: Configure fluentd
+  template:
+    src: fluentd.conf.j2
+    dest: /etc/td-agent/td-agent.conf
+    owner: td-agent
+    group: td-agent
+    mode: '0644'
+  notify: restart fluentd
+
+- name: Ensure fluentd is running
+  service:
+    name: td-agent
+    state: started
+    enabled: true

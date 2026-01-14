@@ -1,0 +1,12 @@
+---
+# DataIngestion group defaults
+
+ingestion_tool: logstash  # logstash
+
+logstash_beats_port: 5044
+logstash_tcp_port: 5000
+logstash_heap_size: "512m"
+
+# Pipeline workers
+logstash_pipeline_workers: 2
+logstash_pipeline_batch_size: 125

@@ -1,0 +1,23 @@
+---
+# Kibana installation and configuration
+
+- name: Install Kibana
+  package:
+    name: kibana
+    state: present
+  when: not offline_mode
+
+- name: Configure Kibana
+  template:
+    src: kibana.yml.j2
+    dest: /etc/kibana/kibana.yml
+    owner: root
+    group: kibana
+    mode: '0660'
+  notify: restart kibana
+
+- name: Ensure Kibana is running
+  service:
+    name: kibana
+    state: started
+    enabled: true

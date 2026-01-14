@@ -1,0 +1,17 @@
+# Managed by Ansible - Data Pipeline Builder
+# Kibana configuration for {{ inventory_hostname }}
+
+server.port: {{ kibana_port }}
+server.host: "{{ kibana_host }}"
+server.name: "{{ inventory_hostname }}"
+
+elasticsearch.hosts: {{ wiring.storage.elasticsearch_hosts | to_json }}
+
+{% if tls_enabled %}
+elasticsearch.ssl.certificateAuthorities: ["{{ tls_ca_path }}"]
+server.ssl.enabled: true
+server.ssl.certificate: {{ tls_cert_path }}/kibana.crt
+server.ssl.key: {{ tls_key_path }}/kibana.key
+{% endif %}
+
+logging.dest: /var/log/kibana/kibana.log

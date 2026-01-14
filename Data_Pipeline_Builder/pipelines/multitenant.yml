@@ -1,0 +1,116 @@
+---
+# Profile 4: Multi-tenant SOC Pipeline
+# Isolated tenants on shared infrastructure
+#
+# ASCII Diagram:
+# ┌─────────────────────────────────────────────────────────────────────────────┐
+# │                      MULTI-TENANT SOC PIPELINE                              │
+# ├─────────────────────────────────────────────────────────────────────────────┤
+# │                                                                             │
+# │  ┌─────────────────────┐      ┌─────────────────────┐                      │
+# │  │  datasource_clientA │      │  datasource_clientB │                      │
+# │  │  (rsyslog sources)  │      │  (syslog sources)   │                      │
+# │  └──────────┬──────────┘      └──────────┬──────────┘                      │
+# │             │                            │                                  │
+# │             └──────────┬─────────────────┘                                  │
+# │                        ▼                                                    │
+# │  ┌───────────────────────────────────────────────────────────────┐         │
+# │  │                    collector1 (fluentd)                        │         │
+# │  │   Tenant routing: tag-based → separate outputs                │         │
+# │  └───────────────────────────────────────────────────────────────┘         │
+# │                        │                                                    │
+# │                        ▼                                                    │
+# │  ┌───────────────────────────────────────────────────────────────┐         │
+# │  │                   ingestor1 (logstash)                         │         │
+# │  │  ┌─────────────────────┐  ┌─────────────────────┐             │         │
+# │  │  │ clientA-pipeline    │  │ clientB-pipeline    │             │         │
+# │  │  │ port: 5044          │  │ port: 5045          │             │         │
+# │  │  └─────────────────────┘  └─────────────────────┘             │         │
+# │  └───────────────────────────────────────────────────────────────┘         │
+# │                        │                                                    │
+# │                        ▼                                                    │
+# │  ┌───────────────────────────────────────────────────────────────┐         │
+# │  │              Kafka Cluster (kafka1, kafka2, kafka3)            │         │
+# │  │  Topics: clientA.raw, clientA.parsed                          │         │
+# │  │          clientB.raw, clientB.parsed                          │         │
+# │  └───────────────────────────────────────────────────────────────┘         │
+# │                        │                                                    │
+# │                        ▼                                                    │
+# │  ┌───────────────────────────────────────────────────────────────┐         │
+# │  │           Elasticsearch Cluster (elastic1, elastic2)           │         │
+# │  │  Indices: clienta-*, clientb-*                                │         │
+# │  └───────────────────────────────────────────────────────────────┘         │
+# │                        │                                                    │
+# │                        ▼                                                    │
+# │  ┌───────────────────────────────────────────────────────────────┐         │
+# │  │                     kibana1 (Kibana)                           │         │
+# │  │  Spaces: clientA, clientB (isolated dashboards)               │         │
+# │  └───────────────────────────────────────────────────────────────┘         │
+# └─────────────────────────────────────────────────────────────────────────────┘
+
+name: multitenant
+description: "Multi-tenant SOC with per-client isolation"
+version: "1.0.0"
+
+multi_tenant: true
+
+# Tenant definitions
+tenants:
+  - name: clientA
+    sources_group: datasource_clientA
+    source_tool: rsyslog
+    topic_prefix: clientA
+    index_prefix: clienta
+    port: 5044
+    tls_bundle: /etc/pki/tenants/clientA
+
+  - name: clientB
+    sources_group: datasource_clientB
+    source_tool: syslog
+    topic_prefix: clientB
+    index_prefix: clientb
+    port: 5045
+    tls_bundle: /etc/pki/tenants/clientB
+
+stages:
+  datasources:
+    enabled: true
+    tool: rsyslog  # Per-tenant override in tenants array
+
+  collection:
+    enabled: true
+    tool: fluentd
+    port: 24224
+
+  ingestion:
+    enabled: true
+    tool: logstash
+    port: 5044  # Base port, incremented per tenant
+
+  streaming:
+    enabled: true
+    tool: kafka
+    cluster_enabled: true
+    port: 9092
+
+  processing:
+    enabled: false
+    tool: null
+
+  storage:
+    enabled: true
+    tool: elasticsearch
+    http_port: 9200
+    cluster_enabled: true
+
+  visualization:
+    enabled: true
+    tool: kibana
+    port: 5601
+
+# Isolation rules
+isolation:
+  topic_naming: "{tenant}.{type}"  # e.g., clientA.raw
+  index_naming: "{tenant}-{date}"  # e.g., clienta-2024.01.15
+  require_tls_per_tenant: false
+  kibana_spaces: true

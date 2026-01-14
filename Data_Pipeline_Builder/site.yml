@@ -1,0 +1,96 @@
+---
+# Data Pipeline Builder - Main Site Playbook
+# Usage: ansible-playbook -i inventories/<env>/hosts site.yml -e "pipeline_profile=distributed_es"
+
+- name: Load Pipeline Profile
+  hosts: localhost
+  gather_facts: false
+  tasks:
+    - name: Load profile configuration
+      include_vars:
+        file: "pipelines/{{ pipeline_profile | default('distributed_es') }}.yml"
+        name: pipeline
+
+    - name: Set pipeline facts for all hosts
+      set_fact:
+        pipeline: "{{ pipeline }}"
+      delegate_to: "{{ item }}"
+      delegate_facts: true
+      loop: "{{ groups['all'] }}"
+
+- name: Preflight Validations
+  hosts: localhost
+  gather_facts: false
+  roles:
+    - role: preflight
+      tags: [preflight, validate]
+
+- name: Compute Wiring Facts
+  hosts: localhost
+  gather_facts: false
+  roles:
+    - role: wiring
+      tags: [wiring, facts]
+
+- name: Deploy DataSources
+  hosts: datasources
+  become: true
+  roles:
+    - role: stage_datasources
+      when: pipeline.stages.datasources.enabled | default(false)
+      tags: [datasources]
+
+- name: Deploy DataCollection
+  hosts: datacollection
+  become: true
+  roles:
+    - role: stage_collection
+      when: pipeline.stages.collection.enabled | default(false)
+      tags: [collection]
+
+- name: Deploy DataIngestion
+  hosts: dataingestion
+  become: true
+  roles:
+    - role: stage_ingestion
+      when: pipeline.stages.ingestion.enabled | default(false)
+      tags: [ingestion]
+
+- name: Deploy DataStreaming
+  hosts: datastreaming
+  become: true
+  roles:
+    - role: stage_streaming
+      when: pipeline.stages.streaming.enabled | default(false)
+      tags: [streaming]
+
+- name: Deploy DataProcessing
+  hosts: dataprocessing
+  become: true
+  roles:
+    - role: stage_processing
+      when: pipeline.stages.processing.enabled | default(false)
+      tags: [processing]
+
+- name: Deploy DataStorage
+  hosts: datastorage
+  become: true
+  roles:
+    - role: stage_storage
+      when: pipeline.stages.storage.enabled | default(false)
+      tags: [storage]
+
+- name: Deploy DataVisualization
+  hosts: datavisualization
+  become: true
+  roles:
+    - role: stage_visualization
+      when: pipeline.stages.visualization.enabled | default(false)
+      tags: [visualization]
+
+- name: Post-deployment Validation
+  hosts: localhost
+  gather_facts: false
+  roles:
+    - role: postflight
+      tags: [postflight, validate]

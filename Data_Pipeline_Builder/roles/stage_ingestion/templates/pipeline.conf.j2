@@ -1,0 +1,72 @@
+# Managed by Ansible - Data Pipeline Builder
+# Logstash pipeline for {{ inventory_hostname }}
+
+input {
+  beats {
+    port => {{ logstash_beats_port }}
+{% if tls_enabled %}
+    ssl => true
+    ssl_certificate => "{{ tls_cert_path }}/logstash.crt"
+    ssl_key => "{{ tls_key_path }}/logstash.key"
+{% endif %}
+  }
+
+  tcp {
+    port => {{ logstash_tcp_port }}
+    codec => json_lines
+  }
+}
+
+filter {
+  # Add timestamp if missing
+  if ![timestamp] {
+    mutate {
+      add_field => { "timestamp" => "%{@timestamp}" }
+    }
+  }
+
+  # Parse syslog format
+  if [type] == "syslog" {
+    grok {
+      match => { "message" => "%{SYSLOGTIMESTAMP:syslog_timestamp} %{SYSLOGHOST:syslog_hostname} %{DATA:syslog_program}(?:\[%{POSINT:syslog_pid}\])?: %{GREEDYDATA:syslog_message}" }
+    }
+  }
+}
+
+output {
+{% if pipeline.stages.streaming.enabled | default(false) %}
+  # Output to streaming layer
+{% if pipeline.stages.streaming.tool == 'kafka' %}
+  kafka {
+    bootstrap_servers => "{{ wiring.streaming.kafka_bootstrap }}"
+    topic_id => "{{ pipeline.stages.streaming.topics[0].name | default('logs-raw') }}"
+    codec => json
+  }
+{% elif pipeline.stages.streaming.tool == 'rabbitmq' %}
+  rabbitmq {
+    host => "{{ wiring.streaming.rabbitmq_hosts[0] }}"
+    port => {{ pipeline.stages.streaming.amqp_port | default(5672) }}
+    exchange => "{{ pipeline.stages.streaming.exchange | default('logs') }}"
+    exchange_type => "{{ pipeline.stages.streaming.exchange_type | default('direct') }}"
+  }
+{% endif %}
+{% else %}
+  # Direct output to storage
+{% if pipeline.stages.storage.tool == 'elasticsearch' %}
+  elasticsearch {
+    hosts => {{ wiring.storage.elasticsearch_hosts | to_json }}
+    index => "{{ pipeline.stages.storage.index_pattern | default('logs-%{+YYYY.MM.dd}') }}"
+{% if tls_enabled %}
+    ssl => true
+    cacert => "{{ tls_ca_path }}"
+{% endif %}
+  }
+{% elif pipeline.stages.storage.tool == 'clickhouse' %}
+  http {
+    url => "http://{{ wiring.storage.clickhouse_host }}:{{ wiring.storage.clickhouse_http_port }}"
+    http_method => "post"
+    format => "json"
+  }
+{% endif %}
+{% endif %}
+}

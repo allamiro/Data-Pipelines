@@ -1,0 +1,15 @@
+---
+# Firewall rules for collection (inbound from sources)
+
+- name: Allow inbound on fluentd port (nftables)
+  command: >
+    nft add rule inet filter input tcp dport {{ fluentd_listen_port }} accept
+  when: firewall_backend == 'nftables'
+  changed_when: false
+
+- name: Allow inbound on fluentd port (ufw)
+  ufw:
+    rule: allow
+    port: "{{ fluentd_listen_port }}"
+    proto: tcp
+  when: firewall_backend == 'ufw'

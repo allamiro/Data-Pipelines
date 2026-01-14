@@ -1,0 +1,22 @@
+---
+# rsyslog configuration for log forwarding
+
+- name: Install rsyslog
+  package:
+    name: rsyslog
+    state: present
+
+- name: Configure rsyslog forwarding
+  template:
+    src: rsyslog-forward.conf.j2
+    dest: /etc/rsyslog.d/50-forward.conf
+    owner: root
+    group: root
+    mode: '0644'
+  notify: restart rsyslog
+
+- name: Ensure rsyslog is running
+  service:
+    name: rsyslog
+    state: started
+    enabled: true

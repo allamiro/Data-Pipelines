@@ -1,0 +1,47 @@
+---
+# Grafana installation and configuration
+
+- name: Install Grafana (Debian)
+  block:
+    - name: Add Grafana GPG key
+      apt_key:
+        url: https://apt.grafana.com/gpg.key
+        state: present
+
+    - name: Add Grafana repository
+      apt_repository:
+        repo: "deb https://apt.grafana.com stable main"
+        state: present
+
+    - name: Install Grafana
+      apt:
+        name: grafana
+        state: present
+        update_cache: true
+  when:
+    - ansible_os_family == 'Debian'
+    - not offline_mode
+
+- name: Configure Grafana
+  template:
+    src: grafana.ini.j2
+    dest: /etc/grafana/grafana.ini
+    owner: root
+    group: grafana
+    mode: '0640'
+  notify: restart grafana
+
+- name: Configure datasource
+  template:
+    src: datasource.yml.j2
+    dest: /etc/grafana/provisioning/datasources/pipeline.yml
+    owner: root
+    group: grafana
+    mode: '0640'
+  notify: restart grafana
+
+- name: Ensure Grafana is running
+  service:
+    name: grafana-server
+    state: started
+    enabled: true

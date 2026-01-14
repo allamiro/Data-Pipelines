@@ -1,0 +1,21 @@
+---
+# Multi-tenant Logstash pipelines
+
+- name: Create tenant pipeline configs
+  template:
+    src: tenant_pipeline.conf.j2
+    dest: "/etc/logstash/conf.d/{{ item.name }}-pipeline.conf"
+    owner: root
+    group: logstash
+    mode: '0644'
+  loop: "{{ pipeline.tenants }}"
+  notify: restart logstash
+
+- name: Configure pipelines.yml for multi-tenant
+  template:
+    src: pipelines.yml.j2
+    dest: /etc/logstash/pipelines.yml
+    owner: root
+    group: logstash
+    mode: '0644'
+  notify: restart logstash

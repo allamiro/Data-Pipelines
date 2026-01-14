@@ -1,0 +1,84 @@
+---
+# Kafka installation and configuration (KRaft mode)
+
+- name: Install Java (required for Kafka)
+  package:
+    name: "{{ 'openjdk-11-jre-headless' if ansible_os_family == 'Debian' else 'java-11-openjdk-headless' }}"
+    state: present
+  when: not offline_mode
+
+- name: Create kafka user
+  user:
+    name: kafka
+    system: true
+    shell: /sbin/nologin
+    home: /opt/kafka
+
+- name: Create Kafka directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: kafka
+    group: kafka
+    mode: '0755'
+  loop:
+    - /opt/kafka
+    - /var/lib/kafka
+    - /var/log/kafka
+
+- name: Download and extract Kafka
+  unarchive:
+    src: "https://archive.apache.org/dist/kafka/3.6.0/kafka_2.13-3.6.0.tgz"
+    dest: /opt/kafka
+    remote_src: true
+    extra_opts: ["--strip-components=1"]
+    owner: kafka
+    group: kafka
+  when: not offline_mode
+
+- name: Configure Kafka (KRaft)
+  template:
+    src: server.properties.j2
+    dest: /opt/kafka/config/kraft/server.properties
+    owner: kafka
+    group: kafka
+    mode: '0644'
+  notify: restart kafka
+
+- name: Create Kafka systemd unit
+  template:
+    src: kafka.service.j2
+    dest: /etc/systemd/system/kafka.service
+    mode: '0644'
+  notify:
+    - reload systemd
+    - restart kafka
+
+- name: Format storage (first run only)
+  command: >
+    /opt/kafka/bin/kafka-storage.sh format
+    -t {{ kafka_cluster_id | default('default-cluster-id') }}
+    -c /opt/kafka/config/kraft/server.properties
+  args:
+    creates: /var/lib/kafka/meta.properties
+
+- name: Ensure Kafka is running
+  service:
+    name: kafka
+    state: started
+    enabled: true
+
+- name: Create topics
+  command: >
+    /opt/kafka/bin/kafka-topics.sh --create
+    --bootstrap-server localhost:{{ kafka_port }}
+    --topic {{ item.name }}
+    --partitions {{ item.partitions | default(kafka_num_partitions) }}
+    --replication-factor {{ item.replication | default(kafka_replication_factor) }}
+  loop: "{{ pipeline.stages.streaming.topics | default([]) }}"
+  register: topic_create
+  changed_when: "'already exists' not in topic_create.stderr"
+  failed_when:
+    - topic_create.rc != 0
+    - "'already exists' not in topic_create.stderr"
+  when: inventory_hostname == groups['datastreaming'][0]

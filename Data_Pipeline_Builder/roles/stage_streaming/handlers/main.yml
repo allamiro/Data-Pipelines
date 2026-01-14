@@ -1,0 +1,14 @@
+---
+- name: restart rabbitmq
+  service:
+    name: rabbitmq-server
+    state: restarted
+
+- name: reload systemd
+  systemd:
+    daemon_reload: true
+
+- name: restart kafka
+  service:
+    name: kafka
+    state: restarted

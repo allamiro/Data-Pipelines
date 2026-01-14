@@ -1,0 +1,26 @@
+---
+# Firewall rules for streaming
+
+- name: Allow RabbitMQ ports (nftables)
+  command: >
+    nft add rule inet filter input tcp dport {{ item }} accept
+  loop:
+    - "{{ rabbitmq_amqp_port }}"
+    - "{{ rabbitmq_mgmt_port }}"
+    - 4369   # epmd
+    - 25672  # inter-node
+  when:
+    - firewall_backend == 'nftables'
+    - pipeline.stages.streaming.tool == 'rabbitmq'
+  changed_when: false
+
+- name: Allow Kafka ports (nftables)
+  command: >
+    nft add rule inet filter input tcp dport {{ item }} accept
+  loop:
+    - "{{ kafka_port }}"
+    - "{{ kafka_controller_port }}"
+  when:
+    - firewall_backend == 'nftables'
+    - pipeline.stages.streaming.tool == 'kafka'
+  changed_when: false

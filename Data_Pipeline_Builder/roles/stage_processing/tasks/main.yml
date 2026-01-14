@@ -1,0 +1,8 @@
+---
+# Stage: DataProcessing - Placeholder for processing stage
+# This stage is reserved for future extensions (Spark, Flink, etc.)
+
+- name: Processing stage placeholder
+  debug:
+    msg: "Processing stage not yet implemented. Reserved for future extensions."
+  when: pipeline.stages.processing.enabled | default(false)

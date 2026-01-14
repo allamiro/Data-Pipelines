@@ -1,0 +1,15 @@
+# Managed by Ansible - Data Pipeline Builder
+# RabbitMQ configuration for {{ inventory_hostname }}
+
+listeners.tcp.default = {{ rabbitmq_amqp_port }}
+management.tcp.port = {{ rabbitmq_mgmt_port }}
+
+# Cluster configuration
+cluster_formation.peer_discovery_backend = classic_config
+{% for host in groups['datastreaming'] %}
+cluster_formation.classic_config.nodes.{{ loop.index }} = rabbit@{{ host }}
+{% endfor %}
+
+# Resource limits
+vm_memory_high_watermark.relative = 0.6
+disk_free_limit.relative = 1.0

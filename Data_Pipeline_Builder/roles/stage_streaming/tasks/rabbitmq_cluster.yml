@@ -1,0 +1,22 @@
+---
+# RabbitMQ cluster join tasks
+
+- name: Stop RabbitMQ app
+  command: rabbitmqctl stop_app
+  changed_when: false
+
+- name: Reset node
+  command: rabbitmqctl reset
+  changed_when: false
+
+- name: Join cluster
+  command: "rabbitmqctl join_cluster rabbit@{{ groups['datastreaming'][0] }}"
+  register: cluster_join
+  changed_when: "'already_member' not in cluster_join.stderr"
+  failed_when:
+    - cluster_join.rc != 0
+    - "'already_member' not in cluster_join.stderr"
+
+- name: Start RabbitMQ app
+  command: rabbitmqctl start_app
+  changed_when: false

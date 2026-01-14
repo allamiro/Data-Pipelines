@@ -1,0 +1,56 @@
+---
+# Elasticsearch installation and clustering
+
+- name: Install Java
+  package:
+    name: "{{ 'openjdk-11-jre-headless' if ansible_os_family == 'Debian' else 'java-11-openjdk-headless' }}"
+    state: present
+  when: not offline_mode
+
+- name: Install Elasticsearch
+  package:
+    name: elasticsearch
+    state: present
+  when: not offline_mode
+
+- name: Create data directory
+  file:
+    path: "{{ elasticsearch_data_path }}"
+    state: directory
+    owner: elasticsearch
+    group: elasticsearch
+    mode: '0755'
+
+- name: Configure Elasticsearch
+  template:
+    src: elasticsearch.yml.j2
+    dest: /etc/elasticsearch/elasticsearch.yml
+    owner: root
+    group: elasticsearch
+    mode: '0660'
+  notify: restart elasticsearch
+
+- name: Configure JVM options
+  template:
+    src: jvm.options.j2
+    dest: /etc/elasticsearch/jvm.options.d/heap.options
+    owner: root
+    group: elasticsearch
+    mode: '0644'
+  notify: restart elasticsearch
+
+- name: Ensure Elasticsearch is running
+  service:
+    name: elasticsearch
+    state: started
+    enabled: true
+
+- name: Wait for Elasticsearch to be ready
+  uri:
+    url: "http://{{ ansible_host }}:{{ elasticsearch_http_port }}/_cluster/health"
+    method: GET
+  register: es_health
+  until: es_health.status == 200
+  retries: 30
+  delay: 10
+  when: inventory_hostname == groups['datastorage'][0]

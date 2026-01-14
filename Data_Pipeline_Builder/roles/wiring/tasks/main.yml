@@ -1,0 +1,131 @@
+---
+# Wiring computation - exports endpoints/ports between stages
+
+- name: Compute collector endpoints
+  set_fact:
+    wiring_collector_endpoints: >-
+      {{ groups['datacollection'] | default([]) | 
+         map('extract', hostvars, 'ansible_host') | 
+         map('regex_replace', '^(.*)$', '\1:' ~ (pipeline.stages.collection.port | default(default_ports.fluentd))) | 
+         list }}
+    wiring_collector_host: "{{ groups['datacollection'][0] | default('localhost') }}"
+    wiring_collector_port: "{{ pipeline.stages.collection.port | default(default_ports.fluentd) }}"
+  when: pipeline.stages.collection.enabled | default(false)
+
+- name: Compute ingestion endpoints
+  set_fact:
+    wiring_ingestion_endpoints: >-
+      {{ groups['dataingestion'] | default([]) | 
+         map('extract', hostvars, 'ansible_host') | 
+         map('regex_replace', '^(.*)$', '\1:' ~ (pipeline.stages.ingestion.port | default(default_ports.logstash_beats))) | 
+         list }}
+    wiring_ingestion_host: "{{ pipeline.stages.ingestion.vip | default(hostvars[groups['dataingestion'][0]]['ansible_host']) | default('localhost') }}"
+    wiring_ingestion_port: "{{ pipeline.stages.ingestion.port | default(default_ports.logstash_beats) }}"
+  when: pipeline.stages.ingestion.enabled | default(false)
+
+- name: Compute streaming broker list (RabbitMQ)
+  set_fact:
+    wiring_rabbitmq_brokers: >-
+      {{ groups['datastreaming'] | default([]) | 
+         map('extract', hostvars, 'ansible_host') | 
+         map('regex_replace', '^(.*)$', '\1:' ~ (pipeline.stages.streaming.amqp_port | default(default_ports.rabbitmq_amqp))) | 
+         list }}
+    wiring_rabbitmq_hosts: "{{ groups['datastreaming'] | default([]) | map('extract', hostvars, 'ansible_host') | list }}"
+  when:
+    - pipeline.stages.streaming.enabled | default(false)
+    - pipeline.stages.streaming.tool == 'rabbitmq'
+
+- name: Compute streaming broker list (Kafka)
+  set_fact:
+    wiring_kafka_brokers: >-
+      {{ groups['datastreaming'] | default([]) | 
+         map('extract', hostvars, 'ansible_host') | 
+         map('regex_replace', '^(.*)$', '\1:' ~ (pipeline.stages.streaming.port | default(default_ports.kafka))) | 
+         list }}
+    wiring_kafka_bootstrap_servers: >-
+      {{ groups['datastreaming'] | default([]) | 
+         map('extract', hostvars, 'ansible_host') | 
+         map('regex_replace', '^(.*)$', '\1:' ~ (pipeline.stages.streaming.port | default(default_ports.kafka))) | 
+         join(',') }}
+  when:
+    - pipeline.stages.streaming.enabled | default(false)
+    - pipeline.stages.streaming.tool == 'kafka'
+
+- name: Compute storage hosts (Elasticsearch)
+  set_fact:
+    wiring_elasticsearch_hosts: >-
+      {{ groups['datastorage'] | default([]) | 
+         map('extract', hostvars, 'ansible_host') | 
+         map('regex_replace', '^(.*)$', 'http://\1:' ~ (pipeline.stages.storage.http_port | default(default_ports.elasticsearch_http))) | 
+         list }}
+    wiring_elasticsearch_host: "{{ hostvars[groups['datastorage'][0]]['ansible_host'] | default('localhost') }}"
+    wiring_elasticsearch_port: "{{ pipeline.stages.storage.http_port | default(default_ports.elasticsearch_http) }}"
+  when:
+    - pipeline.stages.storage.enabled | default(false)
+    - pipeline.stages.storage.tool == 'elasticsearch'
+
+- name: Compute storage hosts (ClickHouse)
+  set_fact:
+    wiring_clickhouse_host: "{{ hostvars[groups['datastorage'][0]]['ansible_host'] | default('localhost') }}"
+    wiring_clickhouse_http_port: "{{ pipeline.stages.storage.http_port | default(default_ports.clickhouse_http) }}"
+    wiring_clickhouse_native_port: "{{ pipeline.stages.storage.native_port | default(default_ports.clickhouse_native) }}"
+  when:
+    - pipeline.stages.storage.enabled | default(false)
+    - pipeline.stages.storage.tool == 'clickhouse'
+
+- name: Compute visualization endpoints
+  set_fact:
+    wiring_kibana_host: "{{ hostvars[groups['datavisualization'][0]]['ansible_host'] | default('localhost') }}"
+    wiring_kibana_port: "{{ pipeline.stages.visualization.port | default(default_ports.kibana) }}"
+  when:
+    - pipeline.stages.visualization.enabled | default(false)
+    - pipeline.stages.visualization.tool == 'kibana'
+
+- name: Compute Grafana endpoints
+  set_fact:
+    wiring_grafana_host: "{{ hostvars[groups['datavisualization'][0]]['ansible_host'] | default('localhost') }}"
+    wiring_grafana_port: "{{ pipeline.stages.visualization.port | default(default_ports.grafana) }}"
+  when:
+    - pipeline.stages.visualization.enabled | default(false)
+    - pipeline.stages.visualization.tool == 'grafana'
+
+- name: Export wiring facts to all hosts
+  set_fact:
+    wiring:
+      collector:
+        endpoints: "{{ wiring_collector_endpoints | default([]) }}"
+        host: "{{ wiring_collector_host | default('') }}"
+        port: "{{ wiring_collector_port | default('') }}"
+      ingestion:
+        endpoints: "{{ wiring_ingestion_endpoints | default([]) }}"
+        host: "{{ wiring_ingestion_host | default('') }}"
+        port: "{{ wiring_ingestion_port | default('') }}"
+      streaming:
+        rabbitmq_brokers: "{{ wiring_rabbitmq_brokers | default([]) }}"
+        rabbitmq_hosts: "{{ wiring_rabbitmq_hosts | default([]) }}"
+        kafka_brokers: "{{ wiring_kafka_brokers | default([]) }}"
+        kafka_bootstrap: "{{ wiring_kafka_bootstrap_servers | default('') }}"
+      storage:
+        elasticsearch_hosts: "{{ wiring_elasticsearch_hosts | default([]) }}"
+        elasticsearch_host: "{{ wiring_elasticsearch_host | default('') }}"
+        elasticsearch_port: "{{ wiring_elasticsearch_port | default('') }}"
+        clickhouse_host: "{{ wiring_clickhouse_host | default('') }}"
+        clickhouse_http_port: "{{ wiring_clickhouse_http_port | default('') }}"
+        clickhouse_native_port: "{{ wiring_clickhouse_native_port | default('') }}"
+      visualization:
+        kibana_host: "{{ wiring_kibana_host | default('') }}"
+        kibana_port: "{{ wiring_kibana_port | default('') }}"
+        grafana_host: "{{ wiring_grafana_host | default('') }}"
+        grafana_port: "{{ wiring_grafana_port | default('') }}"
+  delegate_to: "{{ item }}"
+  delegate_facts: true
+  loop: "{{ groups['all'] }}"
+
+- name: Display wiring summary
+  debug:
+    msg: |
+      === Wiring Summary ===
+      Collector: {{ wiring_collector_host | default('N/A') }}:{{ wiring_collector_port | default('N/A') }}
+      Ingestion: {{ wiring_ingestion_host | default('N/A') }}:{{ wiring_ingestion_port | default('N/A') }}
+      Storage: {{ wiring_elasticsearch_host | default(wiring_clickhouse_host) | default('N/A') }}
+      Visualization: {{ wiring_kibana_host | default(wiring_grafana_host) | default('N/A') }}
